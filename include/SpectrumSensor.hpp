@@ -10,6 +10,8 @@ class SpectrumSensor
 
 	private:
 		serial::Serial *comm;
+
+		void wait_for_ok();
 };
 
 };
