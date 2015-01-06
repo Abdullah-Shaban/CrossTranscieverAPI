@@ -13,6 +13,7 @@ void ConfigList::parse(std::vector<std::string> lines)
 	boost::regex rdevice("device ([0-9]+): (.*)\n");
 	boost::regex rdevsam("  device supports channel sampling\n");
 	boost::regex rconfig("  channel config [0-9]+,([0-9]+): (.*)\n");
+	boost::regex rcparam("    ([a-z]+): ([0-9]+).*");
 
 	for(; line != lines.end(); ++line) {
 		boost::smatch g;
@@ -31,6 +32,22 @@ void ConfigList::parse(std::vector<std::string> lines)
 
 			DeviceConfig config(id, name, &(*devices.rbegin()));
 			configs.push_back(config);
+		} else if(boost::regex_match(*line, g, rcparam)) {
+			std::string param = g[1];
+
+			long long value = atoll(std::string(g[2]).c_str());
+
+			if(!param.compare("base")) {
+				configs.rbegin()->base = value;
+			} else if(!param.compare("spacing")) {
+				configs.rbegin()->spacing = value;
+			} else if(!param.compare("num")) {
+				configs.rbegin()->num = value;
+			} else if(!param.compare("bw")) {
+				configs.rbegin()->bw = value;
+			} else if(!param.compare("time")) {
+				configs.rbegin()->time = value;
+			}
 		}
 	}
 }

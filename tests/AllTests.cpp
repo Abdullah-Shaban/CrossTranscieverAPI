@@ -34,6 +34,12 @@ TEST(OffLineTestGroup, TestConfigList)
 	CHECK_EQUAL(0, c->id);
 	STRCMP_EQUAL("Test config", c->name.c_str());
 
+	CHECK(0 == c->base);
+	CHECK(1 == c->spacing);
+	CHECK(1 == c->bw);
+	CHECK(1000000000 == c->num);
+	CHECK(5 == c->time);
+
 	CHECK_EQUAL(c->device->id, 0);
 	STRCMP_EQUAL(c->device->name.c_str(), "Test device");
 	CHECK_EQUAL(c->device->supports_sampling, false);

@@ -20,6 +20,12 @@ class DeviceConfig
 		std::string name;
 		Device *device;
 
+		long long base;
+		long long spacing;
+		long long bw;
+		long long num;
+		long long time;
+
 		DeviceConfig(int id_, const std::string &name_, Device* device_) :
 			id(id_), name(name_), device(device_) {};
 };
