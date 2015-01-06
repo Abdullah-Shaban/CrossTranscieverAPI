@@ -5,4 +5,4 @@ add_library(XCVR_Eshter
 	DeviceImp.cpp
 )
 
-target_link_libraries(XCVR_Eshter serial)
+target_link_libraries(XCVR_Eshter serial ${Boost_LIBRARIES})

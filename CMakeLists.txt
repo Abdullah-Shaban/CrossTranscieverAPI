@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8.7)
 project (xcvr-eshter)
 
+find_package(Boost
+	COMPONENTS regex
+)
+
 enable_language(CXX)
 
 include_directories("/home/avian/src/serial/include")
