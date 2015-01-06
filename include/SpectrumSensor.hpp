@@ -49,6 +49,8 @@ class SpectrumSensor
 		SpectrumSensor(const std::string &port);
 		~SpectrumSensor();
 
+		ConfigList* get_config_list();
+
 	private:
 		serial::Serial *comm;
 

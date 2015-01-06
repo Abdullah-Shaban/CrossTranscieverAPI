@@ -79,6 +79,27 @@ SpectrumSensor::~SpectrumSensor()
 	delete comm;
 }
 
+ConfigList* SpectrumSensor::get_config_list()
+{
+	std::vector<std::string> lines;
+
+	comm->write("list\n");
+
+	while(1) {
+		std::string r = comm->readline();
+		if(r.length() > 0) {
+			lines.push_back(r);
+		} else {
+			break;
+		}
+	}
+
+	ConfigList* cl = new ConfigList();
+	cl->parse(lines);
+
+	return cl;
+}
+
 void SpectrumSensor::wait_for_ok()
 {
 	while(1) {

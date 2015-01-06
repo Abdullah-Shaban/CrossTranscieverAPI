@@ -54,6 +54,21 @@ TEST(OnLineTestGroup, TestSpectrumSensor)
 	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
 }
 
+TEST(OnLineTestGroup, TestGetConfigList)
+{
+	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
+
+	VESNA::ConfigList* cl = ss.get_config_list();
+
+	CHECK(cl != NULL);
+
+	VESNA::DeviceConfig* c = cl->get_config(0, 0);
+
+	CHECK(c != NULL);
+
+	delete cl;
+}
+
 int main(int ac, char** av)
 {
 	int result = 0;
