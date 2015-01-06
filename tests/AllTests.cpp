@@ -3,16 +3,20 @@
 #include "DeviceImp.hpp"
 #include "SpectrumSensor.hpp"
 
-TEST_GROUP(TestGroup)
+TEST_GROUP(OnLineTestGroup)
 {
 };
 
-TEST(TestGroup, TestConstructor)
+TEST_GROUP(OffLineTestGroup)
+{
+};
+
+TEST(OffLineTestGroup, TestConstructor)
 {
 	DeviceImp di;
 }
 
-TEST(TestGroup, TestSpectrumSensor)
+TEST(OnLineTestGroup, TestSpectrumSensor)
 {
 	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
 }

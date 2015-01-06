@@ -5,5 +5,5 @@ target_link_libraries(AllTests CppUTest XCVR_Eshter)
 
 add_custom_target(
 	test ALL
-	COMMAND AllTests
+	COMMAND AllTests -gOffLineTestGroup
 )
