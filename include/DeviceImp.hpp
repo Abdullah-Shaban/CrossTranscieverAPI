@@ -1,0 +1,5 @@
+class DeviceImp
+{
+	public:
+		DeviceImp();
+};
