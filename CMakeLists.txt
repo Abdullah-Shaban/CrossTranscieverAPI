@@ -8,8 +8,8 @@ find_package(Boost
 enable_language(CXX)
 add_definitions ("-Wall")
 
-include_directories("/home/avian/src/serial/include")
-link_directories("/home/avian/src/serial/build")
+include_directories("/home/avian/patch/serial/include")
+link_directories("/home/avian/patch/serial/build")
 
 add_subdirectory(src)
 add_subdirectory(tests)

@@ -64,6 +64,19 @@ DeviceConfig* ConfigList::get_config(int device_id, int config_id)
 	return NULL;
 }
 
+long long DeviceConfig::ch_to_hz(long long ch)
+{
+	assert(ch >= 0);
+	assert(ch < num);
+
+	return base + spacing * ch;
+}
+
+long long DeviceConfig::hz_to_ch(long long hz)
+{
+	return (hz - base) / spacing;
+}
+
 SpectrumSensor::SpectrumSensor(const std::string &port)
 {
 	comm = new serial::Serial(port, 576000, serial::Timeout::simpleTimeout(1000));

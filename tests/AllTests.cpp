@@ -12,10 +12,8 @@ TEST(OffLineTestGroup, TestConstructor)
 	DeviceImp di;
 }
 
-TEST(OffLineTestGroup, TestConfigList)
+static void create_config_list(VESNA::ConfigList& cl)
 {
-	VESNA::ConfigList cl;
-
 	std::vector<std::string> lines;
 	lines.push_back("device 0: Test device\n");
 	lines.push_back("  channel config 0,0: Test config\n");
@@ -26,7 +24,13 @@ TEST(OffLineTestGroup, TestConfigList)
 	lines.push_back("    time: 5 ms\n");
 
 	cl.parse(lines);
+}
 
+TEST(OffLineTestGroup, TestConfigList)
+{
+	VESNA::ConfigList cl;
+
+	create_config_list(cl);
 	VESNA::DeviceConfig *c = cl.get_config(0, 0);
 
 	CHECK(c != NULL);
@@ -43,6 +47,37 @@ TEST(OffLineTestGroup, TestConfigList)
 	CHECK_EQUAL(c->device->id, 0);
 	STRCMP_EQUAL(c->device->name.c_str(), "Test device");
 	CHECK_EQUAL(c->device->supports_sampling, false);
+}
+
+TEST(OffLineTestGroup, TestChToHz)
+{
+	VESNA::ConfigList cl;
+	create_config_list(cl);
+
+	VESNA::DeviceConfig *c = cl.get_config(0, 0);
+
+	CHECK(c->ch_to_hz(0) == c->base);
+}
+
+TEST(OffLineTestGroup, TestHzToCh)
+{
+	VESNA::ConfigList cl;
+	create_config_list(cl);
+
+	VESNA::DeviceConfig *c = cl.get_config(0, 0);
+
+	CHECK(c->hz_to_ch(c->base) == 0);
+}
+
+TEST(OffLineTestGroup, TestChToHzToCh)
+{
+	VESNA::ConfigList cl;
+	create_config_list(cl);
+
+	VESNA::DeviceConfig *c = cl.get_config(0, 0);
+
+	long long ch = c->num/2;
+	CHECK(c->hz_to_ch(c->ch_to_hz(ch)) == ch);
 }
 
 TEST_GROUP(OnLineTestGroup)

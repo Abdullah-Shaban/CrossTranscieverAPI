@@ -28,6 +28,9 @@ class DeviceConfig
 
 		DeviceConfig(int id_, const std::string &name_, Device* device_) :
 			id(id_), name(name_), device(device_) {};
+
+		long long ch_to_hz(long long ch);
+		long long hz_to_ch(long long hz);
 };
 
 class ConfigList
