@@ -74,7 +74,23 @@ long long DeviceConfig::ch_to_hz(long long ch)
 
 long long DeviceConfig::hz_to_ch(long long hz)
 {
+	assert(covers(hz, hz));
 	return (hz - base) / spacing;
+}
+
+long long DeviceConfig::get_start_hz()
+{
+	return ch_to_hz(0);
+}
+
+long long DeviceConfig::get_stop_hz()
+{
+	return ch_to_hz(num - 1);
+}
+
+bool DeviceConfig::covers(long long start_hz, long long stop_hz)
+{
+	return (start_hz >= get_start_hz()) && (stop_hz <= get_stop_hz());
 }
 
 SpectrumSensor::SpectrumSensor(const std::string &port)

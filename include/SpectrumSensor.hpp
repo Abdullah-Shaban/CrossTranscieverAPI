@@ -31,6 +31,11 @@ class DeviceConfig
 
 		long long ch_to_hz(long long ch);
 		long long hz_to_ch(long long hz);
+
+		long long get_start_hz();
+		long long get_stop_hz();
+
+		bool covers(long long start_hz, long long stop_hz);
 };
 
 class ConfigList
