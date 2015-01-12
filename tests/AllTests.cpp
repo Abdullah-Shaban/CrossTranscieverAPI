@@ -76,7 +76,7 @@ TEST(OffLineTestGroup, TestChToHzToCh)
 
 	VESNA::DeviceConfig *c = cl.get_config(0, 0);
 
-	long long ch = c->num/2;
+	VESNA::ch_t ch = c->num/2;
 	CHECK(c->hz_to_ch(c->ch_to_hz(ch)) == ch);
 }
 

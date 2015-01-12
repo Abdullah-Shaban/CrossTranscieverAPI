@@ -2,6 +2,10 @@
 
 namespace VESNA {
 
+typedef long long ch_t;
+typedef long long hz_t;
+typedef long long ms_t;
+
 class Device
 {
 	public:
@@ -20,22 +24,22 @@ class DeviceConfig
 		std::string name;
 		Device *device;
 
-		long long base;
-		long long spacing;
-		long long bw;
-		long long num;
-		long long time;
+		hz_t base;
+		hz_t spacing;
+		hz_t bw;
+		ch_t num;
+		ms_t time;
 
 		DeviceConfig(int id_, const std::string &name_, Device* device_) :
 			id(id_), name(name_), device(device_) {};
 
-		long long ch_to_hz(long long ch);
-		long long hz_to_ch(long long hz);
+		hz_t ch_to_hz(ch_t ch);
+		ch_t hz_to_ch(hz_t hz);
 
-		long long get_start_hz();
-		long long get_stop_hz();
+		hz_t get_start_hz();
+		hz_t get_stop_hz();
 
-		bool covers(long long start_hz, long long stop_hz);
+		bool covers(hz_t start_hz, hz_t stop_hz);
 };
 
 class ConfigList

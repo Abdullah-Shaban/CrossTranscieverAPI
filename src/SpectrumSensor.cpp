@@ -64,7 +64,7 @@ DeviceConfig* ConfigList::get_config(int device_id, int config_id)
 	return NULL;
 }
 
-long long DeviceConfig::ch_to_hz(long long ch)
+hz_t DeviceConfig::ch_to_hz(ch_t ch)
 {
 	assert(ch >= 0);
 	assert(ch < num);
@@ -72,23 +72,23 @@ long long DeviceConfig::ch_to_hz(long long ch)
 	return base + spacing * ch;
 }
 
-long long DeviceConfig::hz_to_ch(long long hz)
+ch_t DeviceConfig::hz_to_ch(hz_t hz)
 {
 	assert(covers(hz, hz));
 	return (hz - base) / spacing;
 }
 
-long long DeviceConfig::get_start_hz()
+hz_t DeviceConfig::get_start_hz()
 {
 	return ch_to_hz(0);
 }
 
-long long DeviceConfig::get_stop_hz()
+hz_t DeviceConfig::get_stop_hz()
 {
 	return ch_to_hz(num - 1);
 }
 
-bool DeviceConfig::covers(long long start_hz, long long stop_hz)
+bool DeviceConfig::covers(hz_t start_hz, hz_t stop_hz)
 {
 	return (start_hz >= get_start_hz()) && (stop_hz <= get_stop_hz());
 }
