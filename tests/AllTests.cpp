@@ -80,6 +80,16 @@ TEST(OffLineTestGroup, TestChToHzToCh)
 	CHECK(c->hz_to_ch(c->ch_to_hz(ch)) == ch);
 }
 
+TEST(OffLineTestGroup, TestSweepConfig)
+{
+	VESNA::ConfigList cl;
+	create_config_list(cl);
+
+	VESNA::DeviceConfig *c = cl.get_config(0, 0);
+
+	VESNA::SweepConfig(c, 0, 1, 1, 100);
+}
+
 TEST_GROUP(OnLineTestGroup)
 {
 };
