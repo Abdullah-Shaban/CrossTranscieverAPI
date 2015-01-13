@@ -162,8 +162,10 @@ void SpectrumSensor::select_sweep_channel(SweepConfig* sc)
 
 	snprintf(buffer, buffer_size, "select channel %lld:%lld:%lld config %d,%d\n",
 			sc->start_ch, sc->step_ch, sc->stop_ch, sc->config->device->id, sc->config->id);
-
 	comm->write(buffer);
+	wait_for_ok();
 
+	snprintf(buffer, buffer_size, "samples %d\n", sc->nsamples);
+	comm->write(buffer);
 	wait_for_ok();
 }
