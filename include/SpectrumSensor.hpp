@@ -100,6 +100,9 @@ class TimestampedData
 		bool parse(std::string s, int ch_num = -1);
 };
 
+typedef bool (*sample_run_cb_t)(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples,
+		void* priv);
+
 class SpectrumSensor
 {
 	public:
@@ -109,8 +112,9 @@ class SpectrumSensor
 		~SpectrumSensor();
 
 		ConfigList* get_config_list();
-		void select_sweep_channel(SweepConfig* sc);
+		void sample_run(const SweepConfig* sc, sample_run_cb_t cb, void* priv);
 
+		void select_sweep_channel(const SweepConfig* sc);
 		void wait_for_ok();
 };
 

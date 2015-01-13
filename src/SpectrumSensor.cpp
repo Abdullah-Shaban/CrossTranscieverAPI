@@ -147,7 +147,7 @@ bool TimestampedData::parse(std::string s, int ch_num)
 				break;
 
 			default:
-				if(!strcmp("DE", tok)) {
+				if(!strcmp("DE", tok) || !strcmp("DE\n", tok)) {
 					result = true;
 					goto error;
 				} else {
@@ -229,7 +229,7 @@ void SpectrumSensor::wait_for_ok()
 	}
 }
 
-void SpectrumSensor::select_sweep_channel(SweepConfig* sc)
+void SpectrumSensor::select_sweep_channel(const SweepConfig* sc)
 {
 	const int buffer_size = 1024;
 	char buffer[buffer_size];
@@ -241,5 +241,31 @@ void SpectrumSensor::select_sweep_channel(SweepConfig* sc)
 
 	snprintf(buffer, buffer_size, "samples %d\n", sc->nsamples);
 	comm->write(buffer);
+	wait_for_ok();
+}
+
+void SpectrumSensor::sample_run(const SweepConfig* sc, sample_run_cb_t cb, void* priv)
+{
+	select_sweep_channel(sc);
+
+	comm->write("sample-on\n");
+
+	TimestampedData samples;
+
+	while(1) {
+		std::string line = comm->readline();
+
+		bool r = samples.parse(line);
+		if(r) {
+			bool cont = cb(sc, &samples, priv);
+			if(!cont) {
+				break;
+			}
+		} else {
+			printf("Ignoring corrupted line: %s\n", line.c_str());
+		}
+	}
+
+	comm->write("sample-off\n");
 	wait_for_ok();
 }

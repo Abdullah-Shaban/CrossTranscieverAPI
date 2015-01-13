@@ -205,6 +205,37 @@ TEST(OnLineTestGroup, TestSelectSweepChannel)
 	delete cl;
 }
 
+int test_cb_cnt;
+
+bool test_cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples, void* priv)
+{
+	std::vector<VESNA::data_t>::const_iterator i = samples->data.begin();
+	for(; i != samples->data.end(); ++i) {
+		CHECK(*i >= 0.0);
+		CHECK(*i < 4096.0);
+	}
+
+	test_cb_cnt++;
+	return false;
+}
+
+TEST(OnLineTestGroup, TestSampleRun)
+{
+	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
+	VESNA::ConfigList* cl = ss.get_config_list();
+
+	VESNA::DeviceConfig* c = cl->get_config(0, 2);
+	VESNA::SweepConfig* sc = c->get_sample_config(c->base, 2500);
+
+	test_cb_cnt = 0;
+	ss.sample_run(sc, test_cb, NULL);
+
+	CHECK_EQUAL(1, test_cb_cnt);
+
+	delete sc;
+	delete cl;
+}
+
 int main(int ac, char** av)
 {
 	int result = 0;
