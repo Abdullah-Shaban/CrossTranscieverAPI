@@ -6,6 +6,8 @@ typedef long long ch_t;
 typedef long long hz_t;
 typedef long long ms_t;
 
+class SweepConfig;
+
 class Device
 {
 	public:
@@ -40,6 +42,8 @@ class DeviceConfig
 		hz_t get_stop_hz();
 
 		bool covers(hz_t start_hz, hz_t stop_hz);
+
+		SweepConfig* get_sample_config(hz_t hz, int nsamples);
 };
 
 class ConfigList

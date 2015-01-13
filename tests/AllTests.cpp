@@ -90,6 +90,23 @@ TEST(OffLineTestGroup, TestSweepConfig)
 	VESNA::SweepConfig(c, 0, 1, 1, 100);
 }
 
+TEST(OffLineTestGroup, TestGetSampleConfig)
+{
+	VESNA::ConfigList cl;
+	create_config_list(cl);
+
+	VESNA::DeviceConfig *c = cl.get_config(0, 0);
+
+	VESNA::SweepConfig *sc = c->get_sample_config(10, 100);
+
+	CHECK(sc->start_ch == c->hz_to_ch(10));
+	CHECK(sc->stop_ch == sc->start_ch + 1);
+	CHECK(sc->step_ch == 1);
+	CHECK(sc->nsamples == 100);
+
+	delete sc;
+}
+
 TEST_GROUP(OnLineTestGroup)
 {
 };

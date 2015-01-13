@@ -93,6 +93,13 @@ bool DeviceConfig::covers(hz_t start_hz, hz_t stop_hz)
 	return (start_hz >= get_start_hz()) && (stop_hz <= get_stop_hz());
 }
 
+SweepConfig* DeviceConfig::get_sample_config(hz_t hz, int nsamples)
+{
+	ch_t ch = hz_to_ch(hz);
+
+	return new SweepConfig(this, ch, ch+1, 1, nsamples);
+}
+
 SpectrumSensor::SpectrumSensor(const std::string &port)
 {
 	comm = new serial::Serial(port, 576000, serial::Timeout::simpleTimeout(1000));
