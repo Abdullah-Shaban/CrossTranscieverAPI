@@ -6,6 +6,8 @@ typedef long long ch_t;
 typedef long long hz_t;
 typedef long long ms_t;
 
+typedef double data_t;
+
 class SweepConfig;
 
 class SpectrumSensorException: public std::exception
@@ -85,6 +87,17 @@ class SweepConfig
 				int nsamples_) :
 			config(config_), start_ch(start_ch_), stop_ch(stop_ch_), step_ch(step_ch_),
 			nsamples(nsamples_) {};
+};
+
+class TimestampedData
+{
+	public:
+		double timestamp;
+		ch_t channel;
+
+		std::vector<data_t> data;
+
+		bool parse(std::string s, int ch_num = -1);
 };
 
 class SpectrumSensor

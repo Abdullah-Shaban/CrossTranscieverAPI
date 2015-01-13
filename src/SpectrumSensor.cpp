@@ -100,6 +100,80 @@ SweepConfig* DeviceConfig::get_sample_config(hz_t hz, int nsamples)
 	return new SweepConfig(this, ch, ch+1, 1, nsamples);
 }
 
+bool TimestampedData::parse(std::string s, int ch_num)
+{
+	char* dup = strdup(s.c_str());
+	bool result = false;
+
+	int n = 0;
+	while(1) {
+		const char* tok = strtok(n == 0 ? dup : NULL, " ");
+		if(tok == NULL) break;
+
+		char* endptr;
+
+		switch(n) {
+
+			case 0:
+				if(strcmp("TS", tok)) {
+					goto error;
+				}
+				break;
+
+			case 1:
+				timestamp = strtod(tok, &endptr);
+				if(endptr == tok) {
+					goto error;
+				}
+				break;
+
+			case 2:
+				if(strcmp("CH", tok)) {
+					goto error;
+				}
+				break;
+
+			case 3:
+				channel = strtol(tok, &endptr, 10);
+				if(endptr == tok) {
+					goto error;
+				}
+				break;
+
+			case 4:
+				if(strcmp("DS", tok)) {
+					goto error;
+				}
+				break;
+
+			default:
+				if(!strcmp("DE", tok)) {
+					result = true;
+					goto error;
+				} else {
+					data_t v = strtod(tok, &endptr);
+					if(endptr == tok) {
+						goto error;
+					} else {
+						data.push_back(v);
+					}
+				}
+				break;
+		}
+
+		n++;
+	}
+
+error:
+	free(dup);
+
+	if(ch_num > -1 && (n + 1 != ch_num + 6)) {
+		result = false;
+	}
+
+	return result;
+}
+
 const char *SpectrumSensorException::what() const throw()
 {
 	return what_.c_str();

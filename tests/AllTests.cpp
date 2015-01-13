@@ -107,6 +107,48 @@ TEST(OffLineTestGroup, TestGetSampleConfig)
 	delete sc;
 }
 
+TEST(OffLineTestGroup, TestTimestampedData)
+{
+	VESNA::TimestampedData d;
+	bool r = d.parse("TS 1 CH 2 DS 3 4 5 6 DE");
+
+	CHECK(r);
+
+	CHECK(d.timestamp == 1.0);
+	CHECK(d.channel == 2);
+
+	CHECK(d.data.size() == 4);
+	CHECK(d.data[0] == 3.0);
+	CHECK(d.data[1] == 4.0);
+	CHECK(d.data[2] == 5.0);
+	CHECK(d.data[3] == 6.0);
+}
+
+TEST(OffLineTestGroup, TestTimestampedDataLength)
+{
+	VESNA::TimestampedData d;
+	bool r = d.parse("TS 1 CH 2 DS 3 4 5 6 DE", 4);
+
+	CHECK(r);
+}
+
+TEST(OffLineTestGroup, TestTimestampedDataLengthError)
+{
+	VESNA::TimestampedData d;
+	bool r = d.parse("TS 1 CH 2 DS 3 4 5 6 DE", 5);
+
+	CHECK(!r);
+}
+
+TEST(OffLineTestGroup, TestTimestampedDataError)
+{
+	VESNA::TimestampedData d;
+	bool r = d.parse("TS 1 C 2 DS 3 4 5 6 DE", 4);
+
+	CHECK(!r);
+}
+
+
 TEST_GROUP(OnLineTestGroup)
 {
 };
