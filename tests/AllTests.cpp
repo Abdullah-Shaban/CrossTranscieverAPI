@@ -131,6 +131,19 @@ TEST(OnLineTestGroup, TestGetConfigList)
 	delete cl;
 }
 
+TEST(OnLineTestGroup, TestSelectSweepChannel)
+{
+	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
+	VESNA::ConfigList* cl = ss.get_config_list();
+	VESNA::DeviceConfig* c = cl->get_config(0, 0);
+	VESNA::SweepConfig* sc = c->get_sample_config(c->base, 100);
+
+	ss.select_sweep_channel(sc);
+
+	delete sc;
+	delete cl;
+}
+
 int main(int ac, char** av)
 {
 	int result = 0;

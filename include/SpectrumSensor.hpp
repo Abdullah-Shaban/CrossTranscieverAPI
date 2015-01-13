@@ -81,6 +81,7 @@ class SpectrumSensor
 		~SpectrumSensor();
 
 		ConfigList* get_config_list();
+		void select_sweep_channel(SweepConfig* sc);
 
 	private:
 		serial::Serial *comm;
