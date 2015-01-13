@@ -8,6 +8,19 @@ typedef long long ms_t;
 
 class SweepConfig;
 
+class SpectrumSensorException: public std::exception
+{
+	public:
+		SpectrumSensorException(const char *w) : what_(w) {};
+		SpectrumSensorException(const std::string &w) : what_(w) {};
+		~SpectrumSensorException() throw() {};
+
+		const char *what() const throw();
+	private:
+
+		std::string what_;
+};
+
 class Device
 {
 	public:
@@ -77,14 +90,13 @@ class SweepConfig
 class SpectrumSensor
 {
 	public:
+		serial::Serial *comm;
+
 		SpectrumSensor(const std::string &port);
 		~SpectrumSensor();
 
 		ConfigList* get_config_list();
 		void select_sweep_channel(SweepConfig* sc);
-
-	private:
-		serial::Serial *comm;
 
 		void wait_for_ok();
 };

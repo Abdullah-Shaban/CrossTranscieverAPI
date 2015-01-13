@@ -100,6 +100,11 @@ SweepConfig* DeviceConfig::get_sample_config(hz_t hz, int nsamples)
 	return new SweepConfig(this, ch, ch+1, 1, nsamples);
 }
 
+const char *SpectrumSensorException::what() const throw()
+{
+	return what_.c_str();
+}
+
 SpectrumSensor::SpectrumSensor(const std::string &port)
 {
 	comm = new serial::Serial(port, 576000, serial::Timeout::simpleTimeout(1000));
@@ -138,10 +143,14 @@ ConfigList* SpectrumSensor::get_config_list()
 
 void SpectrumSensor::wait_for_ok()
 {
+	const char* error = "error:";
+
 	while(1) {
 		std::string r = comm->readline();
 		if(!r.compare("ok\n")) {
 			return;
+		} else if(r.length() >= strlen(error) && !r.compare(0, strlen(error), error)) {
+			throw SpectrumSensorException(r.substr(0, r.length()-1));
 		}
 	}
 }

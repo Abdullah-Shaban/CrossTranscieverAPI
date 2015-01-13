@@ -111,6 +111,25 @@ TEST_GROUP(OnLineTestGroup)
 {
 };
 
+TEST(OnLineTestGroup, TestError)
+{
+	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
+
+	ss.comm->write("invalid-command\n");
+
+	std::string what;
+	int t = 0;
+	try {
+		ss.wait_for_ok();
+	} catch(VESNA::SpectrumSensorException e) {
+		what = e.what();
+		t = 1;
+	}
+
+	CHECK(!what.compare("error: unknown command: invalid-command"));
+	CHECK(t == 1);
+}
+
 TEST(OnLineTestGroup, TestSpectrumSensor)
 {
 	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
