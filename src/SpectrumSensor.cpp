@@ -262,7 +262,7 @@ void SpectrumSensor::sample_run(const SweepConfig* sc, sample_run_cb_t cb, void*
 				break;
 			}
 		} else {
-			printf("Ignoring corrupted line: %s\n", line.c_str());
+			fprintf(stderr, "Ignoring corrupted line: %s\n", line.c_str());
 		}
 	}
 
