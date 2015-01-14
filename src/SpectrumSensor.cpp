@@ -260,11 +260,10 @@ void SpectrumSensor::sample_run(const SweepConfig* sc, sample_run_cb_t cb, void*
 
 	comm->write("sample-on\n");
 
-	TimestampedData samples;
-
 	while(1) {
 		std::string line = comm->readline(262144);
 
+		TimestampedData samples;
 		bool r = samples.parse(line);
 		if(r) {
 			bool cont = cb(sc, &samples, priv);
