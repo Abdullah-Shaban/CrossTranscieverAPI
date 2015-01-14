@@ -19,6 +19,7 @@ Requirements:
 
  * Boost libraries (`apt-get install libboost1.49-dev`)
  * libserial (https://github.com/wjwwood/serial)
+ * cpputest (`apt-get install libcpputest-dev`)
 
 To compile:
 
