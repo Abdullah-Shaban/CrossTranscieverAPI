@@ -4,6 +4,11 @@ WINNF transceiver facility implementation for SNE-ESHTER
 This is Work In Progress of the [WINNF transceiver facility][1] implementation
 for the [VESNA spectrum sensor][2], specifically for the SNE ESHTER hardware.
 
+The implementation is based on a C++ port of the vesna-spectrum-sensor Python
+module. The SpectrumSensor C++ class should provide an almost identical
+interface to the hardware as in Python. Transceiver facility interface is
+implemented as a thin layer on top of the SpectrumSensor class.
+
 [1]: http://www.crew-project.eu/portal/transceiver-facility-specification
 [2]: https://github.com/avian2/vesna-spectrum-sensor
 
