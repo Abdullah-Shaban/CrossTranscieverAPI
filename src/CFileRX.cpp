@@ -3,6 +3,8 @@
 
 #include "SpectrumSensor.hpp"
 
+const int max_nsamples_run = 25000;
+
 const char* device = "/dev/ttyUSB0";
 int samp_rate = 1000000;
 VESNA::hz_t freq = -1;
@@ -114,8 +116,8 @@ int main(int argc, char** argv)
 	}
 
 	int nsamples_run = nsamples;
-	if(nsamples_run > 25000 || nsamples < 1) {
-		nsamples_run = 25000;
+	if(nsamples_run > max_nsamples_run || nsamples < 1) {
+		nsamples_run = max_nsamples_run;
 	}
 
 	out = fopen(outp, "wb");
