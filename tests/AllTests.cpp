@@ -225,7 +225,7 @@ TEST(OnLineTestGroup, TestSampleRun)
 	VESNA::ConfigList* cl = ss.get_config_list();
 
 	VESNA::DeviceConfig* c = cl->get_config(0, 2);
-	VESNA::SweepConfig* sc = c->get_sample_config(c->base, 2500);
+	VESNA::SweepConfig* sc = c->get_sample_config(c->base, 25000);
 
 	test_cb_cnt = 0;
 	ss.sample_run(sc, test_cb, NULL);
