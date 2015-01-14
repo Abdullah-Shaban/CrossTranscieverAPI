@@ -64,6 +64,16 @@ DeviceConfig* ConfigList::get_config(int device_id, int config_id)
 	return NULL;
 }
 
+int ConfigList::get_config_num()
+{
+	return configs.size();
+}
+
+int ConfigList::get_device_num()
+{
+	return devices.size();
+}
+
 hz_t DeviceConfig::ch_to_hz(ch_t ch)
 {
 	assert(ch >= 0);

@@ -69,6 +69,9 @@ class ConfigList
 
 		DeviceConfig* get_config(int device_id, int config_id);
 
+		int get_config_num();
+		int get_device_num();
+
 	private:
 		std::vector<DeviceConfig> configs;
 		std::vector<Device> devices;

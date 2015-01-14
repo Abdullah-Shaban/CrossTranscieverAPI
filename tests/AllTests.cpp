@@ -49,6 +49,16 @@ TEST(OffLineTestGroup, TestConfigList)
 	CHECK_EQUAL(c->device->supports_sampling, false);
 }
 
+TEST(OffLineTestGroup, TestConfigListGetNum)
+{
+	VESNA::ConfigList cl;
+
+	create_config_list(cl);
+
+	CHECK_EQUAL(cl.get_config_num(), 1);
+	CHECK_EQUAL(cl.get_device_num(), 1);
+}
+
 TEST(OffLineTestGroup, TestChToHz)
 {
 	VESNA::ConfigList cl;
