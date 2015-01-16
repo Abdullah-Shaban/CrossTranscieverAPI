@@ -40,7 +40,9 @@ samples that mimics `uhd_rx_cfile` from the USRP hardware driver suite.
 License
 -------
 
-Copyright (C) 2015 SensorLab, Jozef Stefan Institute
+transceiver.hpp is Copyright Thales Communications S.A
+
+All other code Copyright (C) 2015 SensorLab, Jozef Stefan Institute
 http://sensorlab.ijs.si
 
 Written by Tomaz Solc, tomaz.solc@ijs.si

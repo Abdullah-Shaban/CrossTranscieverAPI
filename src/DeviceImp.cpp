@@ -1,5 +1,5 @@
 #include "DeviceImp.hpp"
 
-DeviceImp::DeviceImp()
+DeviceImp::DeviceImp(Transceiver::I_ReceiveDataPush* rx_if)
 {
 }

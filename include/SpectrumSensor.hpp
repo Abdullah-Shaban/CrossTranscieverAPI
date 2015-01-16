@@ -1,3 +1,6 @@
+#ifndef HAVE_SPECTRUMSENSOR_H
+#define HAVE_SPECTRUMSENSOR_H
+
 #include "serial/serial.h"
 
 namespace VESNA {
@@ -122,3 +125,5 @@ class SpectrumSensor
 };
 
 };
+
+#endif
