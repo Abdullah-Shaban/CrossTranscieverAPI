@@ -1,6 +1,6 @@
 #include "SpectrumSensorAsync.hpp"
 
-SpectrumSensorAsync::SpectrumSensorAsync(const std::string &port)
+SpectrumSensorAsync::SpectrumSensorAsync(const std::string &port, Transceiver::I_ReceiveDataPush* rx)
 {
 	ss = new VESNA::SpectrumSensor(port);
 

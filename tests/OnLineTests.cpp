@@ -100,14 +100,33 @@ TEST(SpectrumSensorTestGroup, TestSampleRun)
 	delete cl;
 }
 
+class TestReceiver : public Transceiver::I_ReceiveDataPush
+{
+	public:
+		unsigned sample_cnt;
+
+		void pushBBSamplesRx(Transceiver::BBPacket* thePushedPacket,
+				Transceiver::Boolean endOfBurst) {
+			sample_cnt += thePushedPacket->SampleNumber;
+		};
+		TestReceiver() : sample_cnt(0) {};
+		~TestReceiver() {};
+};
+
 TEST(SpectrumSensorAsyncTestGroup, TestAsyncConstructor)
 {
-	SpectrumSensorAsync ssa("/dev/ttyUSB0");
+	TestReceiver rx;
+	SpectrumSensorAsync ssa("/dev/ttyUSB0", &rx);
+
+	CHECK_EQUAL(0, rx.sample_cnt);
 }
 
-TEST(SpectrumSensorAsyncTestGroup, TestAsyncConfigList)
+TEST(SpectrumSensorAsyncTestGroup, TestAsyncRun)
 {
-	SpectrumSensorAsync ssa("/dev/ttyUSB0");
+	TestReceiver rx;
+	SpectrumSensorAsync ssa("/dev/ttyUSB0", &rx);
 
-	VESNA::ConfigList* config_list = ssa.config_list;
+	VESNA::ConfigList* cl = ssa.config_list;
+
+	CHECK_EQUAL(0, rx.sample_cnt);
 }

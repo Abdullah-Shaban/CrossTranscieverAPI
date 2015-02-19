@@ -2,11 +2,12 @@
 #define HAVE_SPECTRUMSENSORASYNC_H
 
 #include "SpectrumSensor.hpp"
+#include "transceiver.hpp"
 
 class SpectrumSensorAsync
 {
 	public:
-		SpectrumSensorAsync(const std::string &port);
+		SpectrumSensorAsync(const std::string &port, Transceiver::I_ReceiveDataPush* rx);
 		~SpectrumSensorAsync();
 
 		VESNA::SpectrumSensor *ss;
