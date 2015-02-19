@@ -1,3 +1,5 @@
+#include <unistd.h>
+
 #include "CppUTest/CommandLineTestRunner.h"
 
 #include "SpectrumSensor.hpp"
@@ -128,5 +130,18 @@ TEST(SpectrumSensorAsyncTestGroup, TestAsyncRun)
 
 	VESNA::ConfigList* cl = ssa.config_list;
 
-	CHECK_EQUAL(0, rx.sample_cnt);
+	VESNA::DeviceConfig* c = cl->get_config(0, 2);
+	VESNA::SweepConfig* sc = c->get_sample_config(c->base, nsamples);
+
+	SpectrumSensorAsync::Command cmd1(SpectrumSensorAsync::Command::SAMPLE_ON, *sc);
+	ssa.command(cmd1);
+
+	delete sc;
+
+	sleep(5);
+
+	SpectrumSensorAsync::Command cmd2(SpectrumSensorAsync::Command::SAMPLE_OFF);
+	ssa.command(cmd2);
+
+	CHECK(rx.sample_cnt > 0);
 }

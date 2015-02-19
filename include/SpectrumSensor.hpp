@@ -89,6 +89,7 @@ class SweepConfig
 		ch_t step_ch;
 		int nsamples;
 
+		SweepConfig() {};
 		SweepConfig(DeviceConfig* config_, ch_t start_ch_, ch_t stop_ch_, ch_t step_ch_, 
 				int nsamples_) :
 			config(config_), start_ch(start_ch_), stop_ch(stop_ch_), step_ch(step_ch_),
