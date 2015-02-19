@@ -104,3 +104,10 @@ TEST(SpectrumSensorAsyncTestGroup, TestAsyncConstructor)
 {
 	SpectrumSensorAsync ssa("/dev/ttyUSB0");
 }
+
+TEST(SpectrumSensorAsyncTestGroup, TestAsyncConfigList)
+{
+	SpectrumSensorAsync ssa("/dev/ttyUSB0");
+
+	VESNA::ConfigList* config_list = ssa.config_list;
+}

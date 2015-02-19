@@ -10,6 +10,7 @@ class SpectrumSensorAsync
 		~SpectrumSensorAsync();
 
 		VESNA::SpectrumSensor *ss;
+		VESNA::ConfigList *config_list;
 };
 
 #endif
