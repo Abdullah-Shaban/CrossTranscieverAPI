@@ -29,7 +29,7 @@ To compile:
 
 To run on-line tests (you need a device connected to `/dev/ttyUSB0`:
 
-    $ tests/AllTests -gOnLineTestGroup
+    $ tests/OnLineTests
 
 Usage
 -----
