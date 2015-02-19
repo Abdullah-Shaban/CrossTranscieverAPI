@@ -3,11 +3,15 @@
 #include "SpectrumSensor.hpp"
 #include "SpectrumSensorAsync.hpp"
 
-TEST_GROUP(OnLineTestGroup)
+TEST_GROUP(SpectrumSensorTestGroup)
 {
 };
 
-TEST(OnLineTestGroup, TestError)
+TEST_GROUP(SpectrumSensorAsyncTestGroup)
+{
+};
+
+TEST(SpectrumSensorTestGroup, TestError)
 {
 	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
 
@@ -26,12 +30,12 @@ TEST(OnLineTestGroup, TestError)
 	CHECK(t == 1);
 }
 
-TEST(OnLineTestGroup, TestSpectrumSensor)
+TEST(SpectrumSensorTestGroup, TestSpectrumSensor)
 {
 	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
 }
 
-TEST(OnLineTestGroup, TestGetConfigList)
+TEST(SpectrumSensorTestGroup, TestGetConfigList)
 {
 	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
 
@@ -46,7 +50,7 @@ TEST(OnLineTestGroup, TestGetConfigList)
 	delete cl;
 }
 
-TEST(OnLineTestGroup, TestSelectSweepChannel)
+TEST(SpectrumSensorTestGroup, TestSelectSweepChannel)
 {
 	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
 	VESNA::ConfigList* cl = ss.get_config_list();
@@ -79,7 +83,7 @@ bool test_cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples
 	}
 }
 
-TEST(OnLineTestGroup, TestSampleRun)
+TEST(SpectrumSensorTestGroup, TestSampleRun)
 {
 	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
 	VESNA::ConfigList* cl = ss.get_config_list();
@@ -96,7 +100,7 @@ TEST(OnLineTestGroup, TestSampleRun)
 	delete cl;
 }
 
-TEST(OnLineTestGroup, TestAsyncConstructor)
+TEST(SpectrumSensorAsyncTestGroup, TestAsyncConstructor)
 {
 	SpectrumSensorAsync ssa("/dev/ttyUSB0");
 }
