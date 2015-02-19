@@ -1,6 +1,7 @@
 #include "CppUTest/CommandLineTestRunner.h"
 
 #include "SpectrumSensor.hpp"
+#include "SpectrumSensorAsync.hpp"
 
 TEST_GROUP(OnLineTestGroup)
 {
@@ -93,4 +94,9 @@ TEST(OnLineTestGroup, TestSampleRun)
 
 	delete sc;
 	delete cl;
+}
+
+TEST(OnLineTestGroup, TestAsyncConstructor)
+{
+	SpectrumSensorAsync ssa("/dev/ttyUSB0");
 }
