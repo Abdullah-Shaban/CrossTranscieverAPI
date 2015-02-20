@@ -127,6 +127,12 @@ static bool test_cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* 
 {
 	test_cb_priv* cb_priv = (test_cb_priv*) priv;
 
+	return cb_priv->rc->pushSamples(sc, samples, cb_priv->cycle);
+}
+
+bool ReceiveChannel::pushSamples(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples,
+		Transceiver::ReceiveCycleProfile* cycle)
+{
 	std::vector<Transceiver::BBSample> bbsamples;
 	std::vector<VESNA::data_t>::const_iterator i = samples->data.begin();
 	for(; i != samples->data.end(); ++i) {
@@ -135,17 +141,19 @@ static bool test_cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* 
 	}
 
 	Transceiver::BBPacket packet(sc->nsamples, &bbsamples.front());
-	return cb_priv->rc->pushSamples(&packet, cb_priv->cycle);
-}
-
-bool ReceiveChannel::pushSamples(Transceiver::BBPacket* packet, Transceiver::ReceiveCycleProfile* cycle)
-{
-	receiver->pushBBSamplesRx(packet, true);
+	//FIXME: Is it ok to always set endOfBurst to true here?
+	receiver->pushBBSamplesRx(&packet, true);
 
 	{
 		boost::unique_lock<boost::mutex> lock(cycle_buffer_m);
 		// FIXME: check other end conditions here
-		if(cycle->ReceiveStopTime.discriminator != Transceiver::undefinedDiscriminator) {
+		Transceiver::Time stopTime = cycle->ReceiveStopTime;
+
+		if(stopTime.discriminator == Transceiver::immediateDiscriminator) {
+			return false;
+		} else if(stopTime.discriminator == Transceiver::eventBasedDiscriminator &&
+				stopTime.eventBased.eventSourceId == Transceiver::receiveStartTime &&
+				samples->timestamp >= stopTime.eventBased.timeShift) {
 			return false;
 		} else {
 			return true;

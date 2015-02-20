@@ -63,7 +63,7 @@ TEST(DeviceImpTestGroup, TestConstructor)
 	DeviceImp di(&rx, &ss);
 }
 
-TEST(DeviceImpTestGroup, TestCreateRXProfile)
+TEST(DeviceImpTestGroup, TestUndefinedStopTime)
 {
 	TestReceiver rx;
 	TestSpectrumSensor ss;
@@ -99,4 +99,32 @@ TEST(DeviceImpTestGroup, TestCreateRXProfile)
 
 	CHECK(rx.sample_count > 0);
 	CHECK(rx.sample_count % 1024 == 0);
+}
+
+TEST(DeviceImpTestGroup, TestReceiveStartTimeRelativeStopTime)
+{
+	TestReceiver rx;
+	TestSpectrumSensor ss;
+	DeviceImp di(&rx, &ss);
+
+	Transceiver::EventBasedTime time(Transceiver::receiveStartTime, 10.);
+
+	Transceiver::ReceiveCycleProfile profile;
+	profile.ReceiveStartTime.discriminator = Transceiver::immediateDiscriminator;
+	profile.ReceiveStopTime.discriminator = Transceiver::eventBasedDiscriminator;
+	profile.ReceiveStopTime.eventBased = time;
+	profile.PacketSize = 1024;
+	profile.TuningPreset = 0;
+	profile.CarrierFrequency = 700e6;
+
+	di.receiveChannel.createReceiveCycleProfile(
+		profile.ReceiveStartTime,
+		profile.ReceiveStopTime,
+		profile.PacketSize,
+		profile.TuningPreset,
+		profile.CarrierFrequency);
+
+	di.receiveChannel.wait();
+
+	CHECK_EQUAL(1024*11, rx.sample_count);
 }
