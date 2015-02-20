@@ -3,13 +3,15 @@
 #include "SpectrumSensor.hpp"
 #include "DeviceImp.hpp"
 
+const char* device = "/dev/ttyUSB0";
+
 TEST_GROUP(SpectrumSensorTestGroup)
 {
 };
 
 TEST(SpectrumSensorTestGroup, TestError)
 {
-	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
+	VESNA::SpectrumSensor ss(device);
 
 	ss.comm->write("invalid-command\n");
 
@@ -28,12 +30,12 @@ TEST(SpectrumSensorTestGroup, TestError)
 
 TEST(SpectrumSensorTestGroup, TestSpectrumSensor)
 {
-	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
+	VESNA::SpectrumSensor ss(device);
 }
 
 TEST(SpectrumSensorTestGroup, TestGetConfigList)
 {
-	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
+	VESNA::SpectrumSensor ss(device);
 
 	VESNA::ConfigList* cl = ss.get_config_list();
 
@@ -48,7 +50,7 @@ TEST(SpectrumSensorTestGroup, TestGetConfigList)
 
 TEST(SpectrumSensorTestGroup, TestSelectSweepChannel)
 {
-	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
+	VESNA::SpectrumSensor ss(device);
 	VESNA::ConfigList* cl = ss.get_config_list();
 	VESNA::DeviceConfig* c = cl->get_config(0, 0);
 	VESNA::SweepConfig* sc = c->get_sample_config(c->base, 100);
@@ -81,7 +83,7 @@ bool test_cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples
 
 TEST(SpectrumSensorTestGroup, TestSampleRun)
 {
-	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
+	VESNA::SpectrumSensor ss(device);
 	VESNA::ConfigList* cl = ss.get_config_list();
 
 	VESNA::DeviceConfig* c = cl->get_config(0, 2);
@@ -118,7 +120,7 @@ class TestReceiver : public Transceiver::I_ReceiveDataPush
 TEST(DeviceImpTestGroup, TestCreateRXProfile)
 {
 	TestReceiver rx;
-	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
+	VESNA::SpectrumSensor ss(device);
 	DeviceImp di(&rx, &ss);
 
 	Transceiver::ReceiveCycleProfile profile;
