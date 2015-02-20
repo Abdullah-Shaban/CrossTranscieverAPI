@@ -112,6 +112,12 @@ class TestReceiver : public Transceiver::I_ReceiveDataPush
 				Transceiver::Boolean endOfBurst) {
 			boost::unique_lock<boost::mutex> lock(sample_count_m);
 			sample_count += thePushedPacket->SampleNumber;
+
+			unsigned n;
+			for(n = 0; n < thePushedPacket->SampleNumber; n++) {
+				CHECK(thePushedPacket->packet[n].valueI > 0.);
+				CHECK(thePushedPacket->packet[n].valueQ == 0.);
+			}
 		};
 		TestReceiver() : sample_count(0) {};
 		~TestReceiver() {};
