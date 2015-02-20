@@ -13,6 +13,9 @@
 class ReceiveChannel : public Transceiver::I_ReceiveControl
 {
 	public:
+		ReceiveChannel(Transceiver::I_ReceiveDataPush* rx);
+		~ReceiveChannel();
+
 		Transceiver::ULong createReceiveCycleProfile(
 				Transceiver::Time requestedReceiveStartTime,
 				Transceiver::Time requestedReceiveStopTime,
@@ -34,12 +37,20 @@ class ReceiveChannel : public Transceiver::I_ReceiveControl
 		std::list<Transceiver::ReceiveCycleProfile*> cycle_buffer;
 		boost::mutex cycle_buffer_m;
 		boost::condition_variable cycle_buffer_cv;
+
+		boost::thread device_control_thread;
+
+		bool want_stop;
+
+		void device_control();
+		Transceiver::ReceiveCycleProfile* get_cycle();
+		void run_cycle(Transceiver::ReceiveCycleProfile* cycle);
 };
 
 class DeviceImp
 {
 	public:
-		DeviceImp(Transceiver::I_ReceiveDataPush* rx_if);
+		DeviceImp(Transceiver::I_ReceiveDataPush* rx);
 		ReceiveChannel receiveChannel;
 };
 

@@ -1,5 +1,20 @@
 #include "DeviceImp.hpp"
 
+#include <stdio.h>
+
+ReceiveChannel::ReceiveChannel(Transceiver::I_ReceiveDataPush* rx)
+	: cycle_buffer_cnt(0), device_control_thread(&ReceiveChannel::device_control, this), want_stop(false)
+{
+}
+
+ReceiveChannel::~ReceiveChannel()
+{
+	want_stop = true;
+	cycle_buffer_cv.notify_all();
+
+	device_control_thread.join();
+}
+
 Transceiver::ULong ReceiveChannel::createReceiveCycleProfile(
 		Transceiver::Time requestedReceiveStartTime,
 		Transceiver::Time requestedReceiveStopTime,
@@ -55,6 +70,35 @@ void ReceiveChannel::setReceiveStopTime(
 	//FIXME: should raise an error here if cycle ID was not found.
 };
 
-DeviceImp::DeviceImp(Transceiver::I_ReceiveDataPush* rx_if)
+void ReceiveChannel::device_control()
+{
+	while(!want_stop) {
+		Transceiver::ReceiveCycleProfile *to_start = get_cycle();
+
+		run_cycle(to_start);
+
+		{
+			boost::unique_lock<boost::mutex> lock(cycle_buffer_m);
+			cycle_buffer.remove(to_start);
+		}
+	}
+}
+
+Transceiver::ReceiveCycleProfile* ReceiveChannel::get_cycle()
+{
+	boost::unique_lock<boost::mutex> lock(cycle_buffer_m);
+	while(cycle_buffer.empty()) {
+		cycle_buffer_cv.wait(lock);
+	}
+
+	return *cycle_buffer.begin();
+}
+
+void ReceiveChannel::run_cycle(Transceiver::ReceiveCycleProfile* cycle)
+{
+}
+
+DeviceImp::DeviceImp(Transceiver::I_ReceiveDataPush* rx)
+		: receiveChannel(rx)
 {
 }
