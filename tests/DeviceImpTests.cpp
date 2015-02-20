@@ -93,7 +93,6 @@ TEST(DeviceImpTestGroup, TestCreateRXProfile)
 	}
 
 	Transceiver::Time stop(Transceiver::immediateDiscriminator);
-
 	di.receiveChannel.setReceiveStopTime(i, stop);
 
 	di.receiveChannel.wait();
