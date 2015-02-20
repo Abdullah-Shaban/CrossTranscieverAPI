@@ -35,7 +35,7 @@ class ReceiveChannel : public Transceiver::I_ReceiveControl
 
 		void wait();
 
-		void pushSamples(Transceiver::BBPacket* packet);
+		bool pushSamples(Transceiver::BBPacket* packet, Transceiver::ReceiveCycleProfile* cycle);
 
 	private:
 		VESNA::I_SpectrumSensor* sensor;

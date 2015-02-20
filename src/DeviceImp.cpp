@@ -118,9 +118,14 @@ Transceiver::ReceiveCycleProfile* ReceiveChannel::get_cycle()
 	}
 }
 
+struct test_cb_priv {
+	ReceiveChannel* rc;
+	Transceiver::ReceiveCycleProfile* cycle;
+};
+
 static bool test_cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples, void* priv)
 {
-	ReceiveChannel* rc = (ReceiveChannel*) priv;
+	test_cb_priv* cb_priv = (test_cb_priv*) priv;
 
 	std::vector<Transceiver::BBSample> bbsamples;
 	std::vector<VESNA::data_t>::const_iterator i = samples->data.begin();
@@ -130,15 +135,22 @@ static bool test_cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* 
 	}
 
 	Transceiver::BBPacket packet(sc->nsamples, &bbsamples.front());
-	rc->pushSamples(&packet);
-
-	// FIXME: check end condition here
-	return false;
+	return cb_priv->rc->pushSamples(&packet, cb_priv->cycle);
 }
 
-void ReceiveChannel::pushSamples(Transceiver::BBPacket* packet)
+bool ReceiveChannel::pushSamples(Transceiver::BBPacket* packet, Transceiver::ReceiveCycleProfile* cycle)
 {
 	receiver->pushBBSamplesRx(packet, true);
+
+	{
+		boost::unique_lock<boost::mutex> lock(cycle_buffer_m);
+		// FIXME: check other end conditions here
+		if(cycle->ReceiveStopTime.discriminator != Transceiver::undefinedDiscriminator) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 }
 
 void ReceiveChannel::run_cycle(Transceiver::ReceiveCycleProfile* cycle)
@@ -148,7 +160,11 @@ void ReceiveChannel::run_cycle(Transceiver::ReceiveCycleProfile* cycle)
 	VESNA::DeviceConfig* c = cl->get_config(0, cycle->TuningPreset);
 	VESNA::SweepConfig* sc = c->get_sample_config(cycle->CarrierFrequency, cycle->PacketSize);
 
-	sensor->sample_run(sc, test_cb, this);
+	test_cb_priv cb_priv;
+	cb_priv.rc = this;
+	cb_priv.cycle = cycle;
+
+	sensor->sample_run(sc, test_cb, &cb_priv);
 
 	delete cl;
 }
