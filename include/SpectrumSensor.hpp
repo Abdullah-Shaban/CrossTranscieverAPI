@@ -109,7 +109,14 @@ class TimestampedData
 typedef bool (*sample_run_cb_t)(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples,
 		void* priv);
 
-class SpectrumSensor
+class I_SpectrumSensor
+{
+	public:
+		virtual ConfigList* get_config_list() = 0;
+		virtual void sample_run(const SweepConfig* sc, sample_run_cb_t cb, void* priv) = 0;
+};
+
+class SpectrumSensor : public I_SpectrumSensor
 {
 	public:
 		serial::Serial *comm;

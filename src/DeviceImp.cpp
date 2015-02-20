@@ -2,8 +2,9 @@
 
 #include <stdio.h>
 
-ReceiveChannel::ReceiveChannel(Transceiver::I_ReceiveDataPush* rx)
-	: cycle_buffer_cnt(0), device_control_thread(&ReceiveChannel::device_control, this), want_stop(false)
+ReceiveChannel::ReceiveChannel(Transceiver::I_ReceiveDataPush* rx, VESNA::I_SpectrumSensor* ss)
+	: sensor(ss), receiver(rx), cycle_buffer_cnt(0),
+	device_control_thread(&ReceiveChannel::device_control, this), want_stop(false)
 {
 }
 
@@ -117,11 +118,24 @@ Transceiver::ReceiveCycleProfile* ReceiveChannel::get_cycle()
 	}
 }
 
-void ReceiveChannel::run_cycle(Transceiver::ReceiveCycleProfile* cycle)
+static bool test_cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples, void* priv)
 {
+	return false;
 }
 
-DeviceImp::DeviceImp(Transceiver::I_ReceiveDataPush* rx)
-		: receiveChannel(rx)
+void ReceiveChannel::run_cycle(Transceiver::ReceiveCycleProfile* cycle)
+{
+	/*
+	VESNA::ConfigList* cl = sensor->get_config_list();
+
+	VESNA::DeviceConfig* c = cl->get_config(0, 2);
+	VESNA::SweepConfig* sc = c->get_sample_config(c->base, 10);
+
+	sensor->sample_run(sc, test_cb, NULL);
+	*/
+}
+
+DeviceImp::DeviceImp(Transceiver::I_ReceiveDataPush* rx, VESNA::I_SpectrumSensor* ss)
+		: receiveChannel(rx, ss)
 {
 }

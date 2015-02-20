@@ -1,10 +1,11 @@
 #ifndef HAVE_DEVICEIMP_H
 #define HAVE_DEVICEIMP_H
 
-// workaround for boost bug
+// workaround for boost/thread.hpp bug
 #include <time.h>
 #undef TIME_UTC
 
+#include "SpectrumSensor.hpp"
 #include "transceiver.hpp"
 
 #include <boost/thread.hpp>
@@ -13,7 +14,7 @@
 class ReceiveChannel : public Transceiver::I_ReceiveControl
 {
 	public:
-		ReceiveChannel(Transceiver::I_ReceiveDataPush* rx);
+		ReceiveChannel(Transceiver::I_ReceiveDataPush* rx, VESNA::I_SpectrumSensor* ss);
 		~ReceiveChannel();
 
 		Transceiver::ULong createReceiveCycleProfile(
@@ -35,6 +36,9 @@ class ReceiveChannel : public Transceiver::I_ReceiveControl
 		void wait();
 
 	private:
+		VESNA::I_SpectrumSensor* sensor;
+		Transceiver::I_ReceiveDataPush* receiver;
+
 		Transceiver::ULong cycle_buffer_cnt;
 		std::list<Transceiver::ReceiveCycleProfile*> cycle_buffer;
 		boost::mutex cycle_buffer_m;
@@ -53,7 +57,7 @@ class ReceiveChannel : public Transceiver::I_ReceiveControl
 class DeviceImp
 {
 	public:
-		DeviceImp(Transceiver::I_ReceiveDataPush* rx);
+		DeviceImp(Transceiver::I_ReceiveDataPush* rx, VESNA::I_SpectrumSensor* ss);
 		ReceiveChannel receiveChannel;
 };
 
