@@ -33,7 +33,7 @@ TEST(DeviceImpTestGroup, TestCreateRXProfile)
 	profile.TuningPreset = 0;
 	profile.CarrierFrequency = 700e6;
 
-	di.receiveChannel.createReceiveCycleProfile(
+	Transceiver::ULong i = di.receiveChannel.createReceiveCycleProfile(
 		profile.ReceiveStartTime,
 		profile.ReceiveStopTime,
 		profile.PacketSize,
@@ -44,5 +44,5 @@ TEST(DeviceImpTestGroup, TestCreateRXProfile)
 
 	Transceiver::Time stop(Transceiver::immediateDiscriminator);
 
-	di.receiveChannel.setReceiveStopTime(1, stop);
+	di.receiveChannel.setReceiveStopTime(i, stop);
 }

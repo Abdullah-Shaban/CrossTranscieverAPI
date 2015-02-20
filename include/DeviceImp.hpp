@@ -1,7 +1,14 @@
 #ifndef HAVE_DEVICEIMP_H
 #define HAVE_DEVICEIMP_H
 
+// workaround for boost bug
+#include <time.h>
+#undef TIME_UTC
+
 #include "transceiver.hpp"
+
+#include <boost/thread.hpp>
+#include <list>
 
 class ReceiveChannel : public Transceiver::I_ReceiveControl
 {
@@ -21,6 +28,12 @@ class ReceiveChannel : public Transceiver::I_ReceiveControl
 		void setReceiveStopTime(
 			Transceiver::ULong targetCycleId,
 			Transceiver::Time requestedReceiveStopTime);
+
+	private:
+		Transceiver::ULong cycle_buffer_cnt;
+		std::list<Transceiver::ReceiveCycleProfile*> cycle_buffer;
+		boost::mutex cycle_buffer_m;
+		boost::condition_variable cycle_buffer_cv;
 };
 
 class DeviceImp
