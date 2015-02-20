@@ -120,19 +120,38 @@ Transceiver::ReceiveCycleProfile* ReceiveChannel::get_cycle()
 
 static bool test_cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples, void* priv)
 {
+	ReceiveChannel* rc = (ReceiveChannel*) priv;
+
+	std::vector<Transceiver::BBSample> bbsamples;
+	std::vector<VESNA::data_t>::const_iterator i = samples->data.begin();
+	for(; i != samples->data.end(); ++i) {
+		Transceiver::BBSample bb(*i, 0.);
+		bbsamples.push_back(bb);
+	}
+
+	Transceiver::BBPacket packet(sc->nsamples, &bbsamples.front());
+	rc->pushSamples(&packet);
+
+	// FIXME: check end condition here
 	return false;
+}
+
+void ReceiveChannel::pushSamples(Transceiver::BBPacket* packet)
+{
+	receiver->pushBBSamplesRx(packet, true);
 }
 
 void ReceiveChannel::run_cycle(Transceiver::ReceiveCycleProfile* cycle)
 {
-	/*
 	VESNA::ConfigList* cl = sensor->get_config_list();
 
-	VESNA::DeviceConfig* c = cl->get_config(0, 2);
+	// FIXME: set frequency here
+	VESNA::DeviceConfig* c = cl->get_config(0, 0);
 	VESNA::SweepConfig* sc = c->get_sample_config(c->base, 10);
 
-	sensor->sample_run(sc, test_cb, NULL);
-	*/
+	sensor->sample_run(sc, test_cb, this);
+
+	delete cl;
 }
 
 DeviceImp::DeviceImp(Transceiver::I_ReceiveDataPush* rx, VESNA::I_SpectrumSensor* ss)

@@ -81,7 +81,6 @@ TEST(DeviceImpTestGroup, TestCreateRXProfile)
 		profile.TuningPreset,
 		profile.CarrierFrequency);
 
-	/*
 	while(1) {
 		{
 			boost::unique_lock<boost::mutex> lock(rx.sample_count_m);
@@ -90,11 +89,12 @@ TEST(DeviceImpTestGroup, TestCreateRXProfile)
 			}
 		}
 	}
-	*/
 
 	Transceiver::Time stop(Transceiver::immediateDiscriminator);
 
 	di.receiveChannel.setReceiveStopTime(i, stop);
 
 	di.receiveChannel.wait();
+
+	CHECK(rx.sample_count > 0);
 }
