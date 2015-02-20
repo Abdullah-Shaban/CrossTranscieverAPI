@@ -31,6 +31,8 @@ class TestSpectrumSensor : public VESNA::I_SpectrumSensor
 
 		void sample_run(const VESNA::SweepConfig* sc, VESNA::sample_run_cb_t cb, void* priv)
 		{
+			CHECK(700000000 == sc->start_ch);
+
 			VESNA::TimestampedData samples;
 			samples.channel = sc->start_ch;
 
@@ -97,4 +99,5 @@ TEST(DeviceImpTestGroup, TestCreateRXProfile)
 	di.receiveChannel.wait();
 
 	CHECK(rx.sample_count > 0);
+	CHECK(rx.sample_count % 1024 == 0);
 }

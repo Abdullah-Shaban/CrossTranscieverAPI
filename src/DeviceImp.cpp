@@ -145,9 +145,8 @@ void ReceiveChannel::run_cycle(Transceiver::ReceiveCycleProfile* cycle)
 {
 	VESNA::ConfigList* cl = sensor->get_config_list();
 
-	// FIXME: set frequency here
-	VESNA::DeviceConfig* c = cl->get_config(0, 0);
-	VESNA::SweepConfig* sc = c->get_sample_config(c->base, 10);
+	VESNA::DeviceConfig* c = cl->get_config(0, cycle->TuningPreset);
+	VESNA::SweepConfig* sc = c->get_sample_config(cycle->CarrierFrequency, cycle->PacketSize);
 
 	sensor->sample_run(sc, test_cb, this);
 
