@@ -32,11 +32,14 @@ class ReceiveChannel : public Transceiver::I_ReceiveControl
 			Transceiver::ULong targetCycleId,
 			Transceiver::Time requestedReceiveStopTime);
 
+		void wait();
+
 	private:
 		Transceiver::ULong cycle_buffer_cnt;
 		std::list<Transceiver::ReceiveCycleProfile*> cycle_buffer;
 		boost::mutex cycle_buffer_m;
-		boost::condition_variable cycle_buffer_cv;
+		boost::condition_variable cycle_buffer_cv_add;
+		boost::condition_variable cycle_buffer_cv_del;
 
 		boost::thread device_control_thread;
 

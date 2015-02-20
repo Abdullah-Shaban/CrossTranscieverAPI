@@ -9,8 +9,11 @@ ReceiveChannel::ReceiveChannel(Transceiver::I_ReceiveDataPush* rx)
 
 ReceiveChannel::~ReceiveChannel()
 {
+	boost::unique_lock<boost::mutex> lock(cycle_buffer_m);
 	want_stop = true;
-	cycle_buffer_cv.notify_all();
+	lock.unlock();
+
+	cycle_buffer_cv_add.notify_all();
 
 	device_control_thread.join();
 }
@@ -38,7 +41,9 @@ Transceiver::ULong ReceiveChannel::createReceiveCycleProfile(
 	//StartTime or something...
 	cycle_buffer.push_back(p);
 
-	cycle_buffer_cv.notify_one();
+	lock.unlock();
+
+	cycle_buffer_cv_add.notify_all();
 
 	return p->ReceiveCycle;
 }
@@ -68,18 +73,32 @@ void ReceiveChannel::setReceiveStopTime(
 	}
 
 	//FIXME: should raise an error here if cycle ID was not found.
-};
+}
+
+void ReceiveChannel::wait()
+{
+	boost::unique_lock<boost::mutex> lock(cycle_buffer_m);
+	while(!cycle_buffer.empty()) {
+		cycle_buffer_cv_del.wait(lock);
+	}
+
+	return;
+}
 
 void ReceiveChannel::device_control()
 {
-	while(!want_stop) {
+	while(1) {
 		Transceiver::ReceiveCycleProfile *to_start = get_cycle();
+		if(to_start == NULL) {
+			break;
+		}
 
 		run_cycle(to_start);
 
 		{
 			boost::unique_lock<boost::mutex> lock(cycle_buffer_m);
 			cycle_buffer.remove(to_start);
+			cycle_buffer_cv_del.notify_all();
 		}
 	}
 }
@@ -87,11 +106,15 @@ void ReceiveChannel::device_control()
 Transceiver::ReceiveCycleProfile* ReceiveChannel::get_cycle()
 {
 	boost::unique_lock<boost::mutex> lock(cycle_buffer_m);
-	while(cycle_buffer.empty()) {
-		cycle_buffer_cv.wait(lock);
+	while(!want_stop && cycle_buffer.empty()) {
+		cycle_buffer_cv_add.wait(lock);
 	}
 
-	return *cycle_buffer.begin();
+	if(want_stop) {
+		return NULL;
+	} else {
+		return *cycle_buffer.begin();
+	}
 }
 
 void ReceiveChannel::run_cycle(Transceiver::ReceiveCycleProfile* cycle)
