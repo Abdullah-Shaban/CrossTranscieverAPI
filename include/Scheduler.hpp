@@ -10,6 +10,8 @@
 #include <boost/thread.hpp>
 #include <boost/asio.hpp>
 
+#include "transceiver.hpp"
+
 typedef void (*scheduler_cb_t)();
 
 class Scheduler
@@ -18,7 +20,7 @@ class Scheduler
 		Scheduler();
 		~Scheduler();
 
-		void schedule_relative(float seconds, scheduler_cb_t handler);
+		void schedule(const Transceiver::Time& time, scheduler_cb_t handler_cb);
 		void stop();
 
 	private:
