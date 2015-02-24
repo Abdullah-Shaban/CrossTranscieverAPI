@@ -29,7 +29,7 @@ class TestSpectrumSensor : public VESNA::I_SpectrumSensor
 			return cl;
 		}
 
-		void sample_run(const VESNA::SweepConfig* sc, VESNA::sample_run_cb_t cb, void* priv)
+		void sample_run(const VESNA::SweepConfig* sc, VESNA::sample_run_cb_t cb)
 		{
 			CHECK(700000000 == sc->start_ch);
 
@@ -42,7 +42,7 @@ class TestSpectrumSensor : public VESNA::I_SpectrumSensor
 			}
 
 			while(1) {
-				bool cont = cb(sc, &samples, priv);
+				bool cont = cb(sc, &samples);
 				if(!cont) {
 					break;
 				}

@@ -254,7 +254,7 @@ void SpectrumSensor::select_sweep_channel(const SweepConfig* sc)
 	wait_for_ok();
 }
 
-void SpectrumSensor::sample_run(const SweepConfig* sc, sample_run_cb_t cb, void* priv)
+void SpectrumSensor::sample_run(const SweepConfig* sc, sample_run_cb_t cb)
 {
 	select_sweep_channel(sc);
 
@@ -266,7 +266,7 @@ void SpectrumSensor::sample_run(const SweepConfig* sc, sample_run_cb_t cb, void*
 		TimestampedData samples;
 		bool r = samples.parse(line);
 		if(r) {
-			bool cont = cb(sc, &samples, priv);
+			bool cont = cb(sc, &samples);
 			if(!cont) {
 				break;
 			}

@@ -2,6 +2,7 @@
 #define HAVE_SPECTRUMSENSOR_H
 
 #include "serial/serial.h"
+#include "boost/function.hpp"
 
 namespace VESNA {
 
@@ -107,14 +108,13 @@ class TimestampedData
 		bool parse(std::string s, int ch_num = -1);
 };
 
-typedef bool (*sample_run_cb_t)(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples,
-		void* priv);
+typedef boost::function<bool (const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples)> sample_run_cb_t;
 
 class I_SpectrumSensor
 {
 	public:
 		virtual ConfigList* get_config_list() = 0;
-		virtual void sample_run(const SweepConfig* sc, sample_run_cb_t cb, void* priv) = 0;
+		virtual void sample_run(const SweepConfig* sc, sample_run_cb_t cb) = 0;
 };
 
 class SpectrumSensor : public I_SpectrumSensor
@@ -126,7 +126,7 @@ class SpectrumSensor : public I_SpectrumSensor
 		~SpectrumSensor();
 
 		ConfigList* get_config_list();
-		void sample_run(const SweepConfig* sc, sample_run_cb_t cb, void* priv);
+		void sample_run(const SweepConfig* sc, sample_run_cb_t cb);
 
 		void select_sweep_channel(const SweepConfig* sc);
 		void wait_for_ok();

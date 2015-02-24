@@ -41,15 +41,9 @@ void DeviceController::stop()
 	}
 }
 
-static bool cb_f(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples, void* priv)
-{
-	DeviceController* dc = (DeviceController*) priv;
-	return dc->cb(sc, samples);
-}
-
 void DeviceController::loop(VESNA::SweepConfig* sc)
 {
-	sensor->sample_run(sc, cb_f, this);
+	sensor->sample_run(sc, boost::bind(&DeviceController::cb, this, _1, _2));
 }
 
 bool DeviceController::cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples)

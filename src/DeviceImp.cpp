@@ -118,18 +118,6 @@ Transceiver::ReceiveCycleProfile* ReceiveChannel::get_cycle()
 	}
 }
 
-struct test_cb_priv {
-	ReceiveChannel* rc;
-	Transceiver::ReceiveCycleProfile* cycle;
-};
-
-static bool test_cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples, void* priv)
-{
-	test_cb_priv* cb_priv = (test_cb_priv*) priv;
-
-	return cb_priv->rc->pushSamples(sc, samples, cb_priv->cycle);
-}
-
 bool ReceiveChannel::pushSamples(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples,
 		Transceiver::ReceiveCycleProfile* cycle)
 {
@@ -168,11 +156,7 @@ void ReceiveChannel::run_cycle(Transceiver::ReceiveCycleProfile* cycle)
 	VESNA::DeviceConfig* c = cl->get_config(0, cycle->TuningPreset);
 	VESNA::SweepConfig* sc = c->get_sample_config(cycle->CarrierFrequency, cycle->PacketSize);
 
-	test_cb_priv cb_priv;
-	cb_priv.rc = this;
-	cb_priv.cycle = cycle;
-
-	sensor->sample_run(sc, test_cb, &cb_priv);
+	sensor->sample_run(sc, boost::bind(&ReceiveChannel::pushSamples, this, _1, _2, cycle));
 
 	delete cl;
 }

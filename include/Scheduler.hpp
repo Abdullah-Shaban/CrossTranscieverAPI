@@ -14,7 +14,7 @@
 
 #include "transceiver.hpp"
 
-typedef void (*scheduler_cb_t)();
+typedef boost::function<void()> scheduler_cb_t;
 
 class EventRegistryEntry
 {
