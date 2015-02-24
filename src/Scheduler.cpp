@@ -2,7 +2,7 @@
 
 Scheduler::Scheduler()
 {
-	struct tm tm1 = {
+	struct tm epoch_tm = {
 		.tm_sec = 0,
 		.tm_min = 0,
 		.tm_hour = 0,
@@ -10,7 +10,7 @@ Scheduler::Scheduler()
 		.tm_mon = 0,
 		.tm_year = 2000 - 1900
 	};
-	epoch = boost::chrono::system_clock::from_time_t(mktime(&tm1));
+	epoch = boost::chrono::system_clock::from_time_t(mktime(&epoch_tm));
 
 	work = new boost::asio::io_service::work(io);
 	thread = boost::thread(&Scheduler::loop, this);
@@ -121,7 +121,6 @@ void Scheduler::handler(timer_t* timer, scheduler_cb_t handler_cb)
 	handler_cb();
 
 	if(timer != NULL) {
-		//timers.remove(timer);
 		delete timer;
 	}
 }
