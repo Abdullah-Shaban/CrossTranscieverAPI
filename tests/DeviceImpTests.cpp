@@ -86,7 +86,7 @@ TEST(DeviceImpTestGroup, TestUndefinedStopTime)
 	while(1) {
 		{
 			boost::unique_lock<boost::mutex> lock(rx.sample_count_m);
-			if(rx.sample_count > 0) {
+			if(rx.sample_count > 102400) {
 				break;
 			}
 		}
@@ -97,7 +97,7 @@ TEST(DeviceImpTestGroup, TestUndefinedStopTime)
 
 	di.receiveChannel.wait();
 
-	CHECK(rx.sample_count > 0);
+	CHECK(rx.sample_count > 102400);
 	CHECK(rx.sample_count % 1024 == 0);
 }
 
@@ -107,7 +107,8 @@ TEST(DeviceImpTestGroup, TestReceiveStartTimeRelativeStopTime)
 	TestSpectrumSensor ss;
 	DeviceImp di(&rx, &ss);
 
-	Transceiver::EventBasedTime time(Transceiver::receiveStartTime, 10.);
+	Transceiver::EventBasedTime time(Transceiver::receiveStartTime, 1000000000.);
+	time.eventCount = 0;
 
 	Transceiver::ReceiveCycleProfile profile;
 	profile.ReceiveStartTime.discriminator = Transceiver::immediateDiscriminator;
@@ -126,5 +127,5 @@ TEST(DeviceImpTestGroup, TestReceiveStartTimeRelativeStopTime)
 
 	di.receiveChannel.wait();
 
-	CHECK_EQUAL(1024*11, rx.sample_count);
+	CHECK(rx.sample_count > 0);
 }

@@ -18,16 +18,16 @@ Scheduler::Scheduler()
 
 Scheduler::~Scheduler()
 {
-	if(work != NULL) {
-		stop();
-	}
+	stop();
 }
 
 void Scheduler::stop()
 {
-	delete work;
-	work = NULL;
-	thread.join();
+	if(work != NULL) {
+		delete work;
+		work = NULL;
+		thread.join();
+	}
 }
 
 void Scheduler::schedule(const Transceiver::Time& time, scheduler_cb_t handler_cb)

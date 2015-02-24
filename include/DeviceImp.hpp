@@ -5,11 +5,20 @@
 #include <time.h>
 #undef TIME_UTC
 
+#include "DeviceController.hpp"
+#include "Scheduler.hpp"
 #include "SpectrumSensor.hpp"
 #include "transceiver.hpp"
 
 #include <boost/thread.hpp>
 #include <list>
+
+class ReceiveCycleProfileEntry
+{
+	public:
+		Transceiver::ReceiveCycleProfile* cycle;
+		VESNA::SweepConfig* sc;
+};
 
 class ReceiveChannel : public Transceiver::I_ReceiveControl
 {
@@ -39,22 +48,15 @@ class ReceiveChannel : public Transceiver::I_ReceiveControl
 				Transceiver::ReceiveCycleProfile* cycle);
 
 	private:
-		VESNA::I_SpectrumSensor* sensor;
-		Transceiver::I_ReceiveDataPush* receiver;
+		DeviceController dc;
+		Scheduler scheduler;
 
 		Transceiver::ULong cycle_buffer_cnt;
-		std::list<Transceiver::ReceiveCycleProfile*> cycle_buffer;
+		std::list<ReceiveCycleProfileEntry*> cycle_buffer;
 		boost::mutex cycle_buffer_m;
-		boost::condition_variable cycle_buffer_cv_add;
-		boost::condition_variable cycle_buffer_cv_del;
 
-		boost::thread device_control_thread;
-
-		bool want_stop;
-
-		void device_control();
-		Transceiver::ReceiveCycleProfile* get_cycle();
-		void run_cycle(Transceiver::ReceiveCycleProfile* cycle);
+		void start_cb(ReceiveCycleProfileEntry* e);
+		void stop_cb(ReceiveCycleProfileEntry* e);
 };
 
 class DeviceImp
