@@ -28,7 +28,9 @@ class EventRegistry
 {
 	public:
 		std::list<EventRegistryEntry> entries;
+
 		Transceiver::ULong event_cnt;
+		boost::chrono::system_clock::time_point last_time;
 };
 
 class Scheduler

@@ -49,9 +49,27 @@ void Scheduler::schedule(const Transceiver::Time& time, scheduler_cb_t handler_c
 
 		if(time.eventBased.eventCountOrigin == Transceiver::EventBasedTime::Next) {
 			entry.target_event_cnt = registry[es].event_cnt + time.eventBased.eventCount;
+		} else if(time.eventBased.eventCountOrigin == Transceiver::EventBasedTime::Previous) {
+			entry.target_event_cnt = registry[es].event_cnt + time.eventBased.eventCount - 1;
+		} else {
+			entry.target_event_cnt = registry[es].event_cnt;
 		}
 
-		registry[es].entries.push_back(entry);
+		if(entry.target_event_cnt >= registry[es].event_cnt) {
+			registry[es].entries.push_back(entry);
+		} else if(entry.target_event_cnt == registry[es].event_cnt - 1) {
+			timer_t* timer = new timer_t(io);
+
+			sysclock_t::time_point tp = registry[es].last_time;
+			tp += boost::chrono::nanoseconds(time.eventBased.timeShift);
+
+			timer->expires_at(tp);
+
+			timer->async_wait(boost::bind(&Scheduler::handler, this, timer, handler_cb));
+		} else {
+			// drop the event - we don't store history for more than one
+			// event back.
+		}
 	}
 }
 
@@ -71,6 +89,7 @@ void Scheduler::event(Transceiver::EventSource es)
 	}
 
 	registry[es].event_cnt++;
+	registry[es].last_time = Scheduler::sysclock_t::now();
 }
 
 Transceiver::Time Scheduler::to_absolute_time(const Scheduler::sysclock_t::time_point& time)
