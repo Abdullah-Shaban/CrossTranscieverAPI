@@ -7,6 +7,7 @@
 
 #include <list>
 
+#include <boost/chrono.hpp>
 #include <boost/thread.hpp>
 #include <boost/asio.hpp>
 
@@ -23,7 +24,7 @@ class Scheduler
 		void schedule(const Transceiver::Time& time, scheduler_cb_t handler_cb);
 		void stop();
 
-		Transceiver::Time to_absolute_time(time_t time, Transceiver::ULong nanoseconds);
+		Transceiver::Time to_absolute_time(const boost::chrono::system_clock::time_point& time);
 
 	private:
 		boost::asio::io_service io;
@@ -35,7 +36,7 @@ class Scheduler
 		void loop();
 		void handler(boost::asio::deadline_timer* timer, scheduler_cb_t handler_cb);
 
-		time_t epoch;
+		boost::chrono::system_clock::time_point epoch;
 };
 
 #endif
