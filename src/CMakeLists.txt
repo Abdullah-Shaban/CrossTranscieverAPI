@@ -2,7 +2,6 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 add_library(XCVR_Eshter
 	SpectrumSensor.cpp
-	SpectrumSensorAsync.cpp
 	DeviceImp.cpp
 	DeviceController.cpp
 	Scheduler.cpp

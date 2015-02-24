@@ -3,7 +3,6 @@
 #include "CppUTest/CommandLineTestRunner.h"
 
 #include "SpectrumSensor.hpp"
-#include "SpectrumSensorAsync.hpp"
 #include "DeviceImp.hpp"
 
 const char* device = "/dev/ttyUSB0";
@@ -121,41 +120,6 @@ class TestReceiver : public Transceiver::I_ReceiveDataPush
 		TestReceiver() : sample_count(0) {};
 		~TestReceiver() {};
 };
-
-TEST_GROUP(SpectrumSensorAsyncTestGroup)
-{
-};
-
-TEST(SpectrumSensorAsyncTestGroup, TestAsyncConstructor)
-{
-	TestReceiver rx;
-	SpectrumSensorAsync ssa(device, &rx);
-
-	CHECK_EQUAL(0, rx.sample_count);
-}
-
-TEST(SpectrumSensorAsyncTestGroup, TestAsyncRun)
-{
-	TestReceiver rx;
-	SpectrumSensorAsync ssa(device, &rx);
-
-	VESNA::ConfigList* cl = ssa.config_list;
-
-	VESNA::DeviceConfig* c = cl->get_config(0, 2);
-	VESNA::SweepConfig* sc = c->get_sample_config(c->base, nsamples);
-
-	SpectrumSensorAsync::Command cmd1(SpectrumSensorAsync::Command::SAMPLE_ON, *sc);
-	ssa.command(cmd1);
-
-	delete sc;
-
-	sleep(5);
-
-	SpectrumSensorAsync::Command cmd2(SpectrumSensorAsync::Command::SAMPLE_OFF);
-	ssa.command(cmd2);
-
-	CHECK(rx.sample_count > 0);
-}
 
 TEST_GROUP(DeviceImpTestGroup)
 {
