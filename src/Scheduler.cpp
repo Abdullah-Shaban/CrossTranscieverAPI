@@ -59,8 +59,14 @@ void Scheduler::event(Transceiver::EventSource es)
 {
 	std::list<EventRegistryEntry>::iterator i = registry[es].entries.begin();
 	for(; i != registry[es].entries.end(); ++i) {
-		if (registry[es].event_cnt == i->target_event_cnt) {
-			handler(NULL, i->cb);
+		if(registry[es].event_cnt == i->target_event_cnt) {
+			if(i->time.eventBased.timeShift == 0) {
+				handler(NULL, i->cb);
+			} else {
+				timer_t* timer = new timer_t(io);
+				timer->expires_from_now(boost::chrono::nanoseconds(i->time.eventBased.timeShift));
+				timer->async_wait(boost::bind(&Scheduler::handler, this, timer, i->cb));
+			}
 		}
 	}
 

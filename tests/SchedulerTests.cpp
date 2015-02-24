@@ -119,3 +119,23 @@ TEST(SchedulerTestGroup, TestEventBasedEventCount)
 	s.stop();
 	CHECK_EQUAL(1, handler_cnt);
 }
+
+TEST(SchedulerTestGroup, TestEventBasedTimeShift)
+{
+	Scheduler s;
+
+	Transceiver::EventBasedTime ev(Transceiver::receiveStartTime, 1000000000);
+	ev.eventCountOrigin = Transceiver::EventBasedTime::Next;
+	ev.eventCount = 0;
+
+	Transceiver::Time t(ev);
+
+	handler_cnt = 0;
+	s.schedule(t, handler1);
+
+	s.event(Transceiver::receiveStartTime);
+	CHECK_EQUAL(0, handler_cnt);
+
+	s.stop();
+	CHECK_EQUAL(1, handler_cnt);
+}
