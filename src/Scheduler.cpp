@@ -34,6 +34,11 @@ void Scheduler::schedule(const Transceiver::Time& time, scheduler_cb_t handler_c
 {
 	if(time.discriminator == Transceiver::immediateDiscriminator) {
 		handler(NULL, handler_cb);
+	} else if(time.discriminator == Transceiver::absoluteDiscriminator) {
+		timer_t* timer = new timer_t(io);
+		timer->expires_at(from_absolute_time(time));
+
+		timer->async_wait(boost::bind(&Scheduler::handler, this, timer, handler_cb));
 	}
 	/*
 	boost::asio::deadline_timer* timer = new boost::asio::deadline_timer(io);
@@ -44,9 +49,9 @@ void Scheduler::schedule(const Transceiver::Time& time, scheduler_cb_t handler_c
 	*/
 }
 
-Transceiver::Time Scheduler::to_absolute_time(const boost::chrono::system_clock::time_point& time)
+Transceiver::Time Scheduler::to_absolute_time(const Scheduler::sysclock_t::time_point& time)
 {
-	boost::chrono::system_clock::duration d = time - epoch;
+	Scheduler::sysclock_t::duration d = time - epoch;
 
 	boost::chrono::seconds seconds = boost::chrono::duration_cast<boost::chrono::seconds>(d);
 	boost::chrono::nanoseconds nanoseconds = d;
@@ -55,12 +60,21 @@ Transceiver::Time Scheduler::to_absolute_time(const boost::chrono::system_clock:
 	return t;
 }
 
-void Scheduler::handler(boost::asio::deadline_timer* timer, scheduler_cb_t handler_cb)
+Scheduler::sysclock_t::time_point Scheduler::from_absolute_time(const Transceiver::Time& time)
+{
+	Scheduler::sysclock_t::time_point tp = epoch;
+	tp += boost::chrono::seconds(time.absolute.secondCount);
+	tp += boost::chrono::nanoseconds(time.absolute.nanosecondCount);
+
+	return tp;
+}
+
+void Scheduler::handler(timer_t* timer, scheduler_cb_t handler_cb)
 {
 	handler_cb();
 
 	if(timer != NULL) {
-		timers.remove(timer);
+		//timers.remove(timer);
 		delete timer;
 	}
 }

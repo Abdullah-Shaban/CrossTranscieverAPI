@@ -22,7 +22,7 @@ void handler2()
 	handler_cnt++;
 }
 
-TEST(SchedulerTestGroup, TestImmediate)
+TEST(SchedulerTestGroup, TestImmediateDiscriminator)
 {
 	Scheduler s;
 
@@ -35,12 +35,23 @@ TEST(SchedulerTestGroup, TestImmediate)
 	CHECK_EQUAL(1, handler_cnt);
 }
 
-TEST(SchedulerTestGroup, TestAbsolute)
+TEST(SchedulerTestGroup, TestAbsoluteDiscriminator)
 {
-	boost::chrono::system_clock::time_point t = boost::chrono::system_clock::now();
+	Scheduler s;
+
+	Scheduler::sysclock_t::time_point tp = boost::chrono::system_clock::now();
+	tp += boost::chrono::seconds(1);
+
+	Transceiver::Time t = s.to_absolute_time(tp);
+
+	handler_cnt = 0;
+	s.schedule(t, handler1);
+
+	s.stop();
+	CHECK_EQUAL(1, handler_cnt);
 }
 
-TEST(SchedulerTestGroup, TestToAbsoluteTime)
+TEST(SchedulerTestGroup, TestToFromAbsoluteTime)
 {
 	struct tm tm1 = {
 		.tm_sec = 10, // 10 seconds past epoch
@@ -52,7 +63,7 @@ TEST(SchedulerTestGroup, TestToAbsoluteTime)
 	};
 
 	time_t t = mktime(&tm1);
-	boost::chrono::system_clock::time_point tp = boost::chrono::system_clock::from_time_t(t);
+	Scheduler::sysclock_t::time_point tp = boost::chrono::system_clock::from_time_t(t);
 	boost::chrono::nanoseconds d(20);
 	tp += d;
 
@@ -63,6 +74,10 @@ TEST(SchedulerTestGroup, TestToAbsoluteTime)
 	CHECK(tt.discriminator == Transceiver::absoluteDiscriminator);
 	CHECK(10 == tt.absolute.secondCount);
 	CHECK(20 == tt.absolute.nanosecondCount);
+
+	Scheduler::sysclock_t::time_point tp2 = s.from_absolute_time(tt);
+
+	CHECK(tp2 == tp);
 }
 
 /*

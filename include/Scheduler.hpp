@@ -18,23 +18,25 @@ typedef void (*scheduler_cb_t)();
 class Scheduler
 {
 	public:
+		typedef boost::chrono::system_clock sysclock_t;
+		typedef boost::asio::basic_waitable_timer<sysclock_t> timer_t;
+
 		Scheduler();
 		~Scheduler();
 
 		void schedule(const Transceiver::Time& time, scheduler_cb_t handler_cb);
 		void stop();
 
-		Transceiver::Time to_absolute_time(const boost::chrono::system_clock::time_point& time);
+		Transceiver::Time to_absolute_time(const sysclock_t::time_point& time);
+		sysclock_t::time_point from_absolute_time(const Transceiver::Time& time);
 
 	private:
 		boost::asio::io_service io;
 		boost::asio::io_service::work *work;
 		boost::thread thread;
 
-		std::list<boost::asio::deadline_timer*> timers;
-
 		void loop();
-		void handler(boost::asio::deadline_timer* timer, scheduler_cb_t handler_cb);
+		void handler(timer_t* timer, scheduler_cb_t handler_cb);
 
 		boost::chrono::system_clock::time_point epoch;
 };
