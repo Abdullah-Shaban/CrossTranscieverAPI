@@ -32,8 +32,6 @@ void Scheduler::stop()
 
 void Scheduler::schedule(const Transceiver::Time& time, scheduler_cb_t handler_cb)
 {
-	boost::unique_lock<boost::mutex> lock(registry_m);
-
 	if(time.discriminator == Transceiver::immediateDiscriminator) {
 		handler(NULL, handler_cb);
 	} else if(time.discriminator == Transceiver::absoluteDiscriminator) {
@@ -42,6 +40,7 @@ void Scheduler::schedule(const Transceiver::Time& time, scheduler_cb_t handler_c
 
 		timer->async_wait(boost::bind(&Scheduler::handler, this, timer, handler_cb));
 	} else if(time.discriminator == Transceiver::eventBasedDiscriminator) {
+		boost::unique_lock<boost::mutex> lock(registry_m);
 
 		Transceiver::EventSource es = time.eventBased.eventSourceId;
 

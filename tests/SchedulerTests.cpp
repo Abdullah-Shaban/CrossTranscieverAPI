@@ -16,12 +16,6 @@ void handler1()
 	handler_cnt++;
 }
 
-void handler2()
-{
-	CHECK_EQUAL(1, handler_cnt);
-	handler_cnt++;
-}
-
 TEST(SchedulerTestGroup, TestImmediateDiscriminator)
 {
 	Scheduler s;
@@ -179,4 +173,51 @@ TEST(SchedulerTestGroup, TestEventBasedPreviousTimeShift)
 
 	s.stop();
 	CHECK_EQUAL(1, handler_cnt);
+}
+
+void handler2(Scheduler* s)
+{
+	s->event(Transceiver::receiveStartTime);
+	handler_cnt++;
+}
+
+TEST(SchedulerTestGroup, TestEventTriggerFromCallback)
+{
+	Scheduler s;
+
+	Scheduler::sysclock_t::time_point tp = boost::chrono::system_clock::now();
+	tp += boost::chrono::seconds(1);
+	Transceiver::Time t1 = s.to_absolute_time(tp);
+
+	Transceiver::EventBasedTime ev(Transceiver::receiveStartTime, 1000000000);
+	ev.eventCountOrigin = Transceiver::EventBasedTime::Next;
+	ev.eventCount = 0;
+	Transceiver::Time t2(ev);
+
+	handler_cnt = 0;
+	s.schedule(t1, boost::bind(handler2, &s));
+	s.schedule(t2, boost::bind(handler2, &s));
+
+	s.stop();
+	CHECK_EQUAL(2, handler_cnt);
+}
+
+TEST(SchedulerTestGroup, TestEventTriggerFromCallbackImmediate)
+{
+	Scheduler s;
+
+	Transceiver::Time t1(Transceiver::immediateDiscriminator);
+
+	Transceiver::EventBasedTime ev(Transceiver::receiveStartTime, 1000000000);
+	ev.eventCountOrigin = Transceiver::EventBasedTime::Previous;
+	ev.eventCount = 0;
+	Transceiver::Time t2(ev);
+
+	handler_cnt = 0;
+	s.schedule(t1, boost::bind(handler2, &s));
+	CHECK_EQUAL(1, handler_cnt);
+	s.schedule(t2, boost::bind(handler2, &s));
+
+	s.stop();
+	CHECK_EQUAL(2, handler_cnt);
 }
