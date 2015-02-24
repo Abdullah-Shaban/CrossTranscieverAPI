@@ -61,9 +61,10 @@ undefined discriminator.
 `configureReceiveCycle()` is not currently supported at all.
 
 While transceiver facility specifies nanosecond precision event scheduling, the
-latency in this implementation is fairly bad. No real-time methods are used.
-VESNA spectrum sensor can be slow to stop reception, specifically with large
-packet sizes (reception can not be interrupted in the middle of a packet).
+latency in this implementation is fairly bad. No real-time methods are used
+(not supported in the current vesna-spectrum-sensor firmware). VESNA spectrum
+sensor can be slow to stop reception, specifically with large packet sizes
+(reception can not be interrupted in the middle of a packet).
 
 Usage
 -----
