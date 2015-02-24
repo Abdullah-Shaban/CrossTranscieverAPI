@@ -4,18 +4,17 @@
 
 #include "SpectrumSensor.hpp"
 #include "SpectrumSensorAsync.hpp"
+#include "DeviceImp.hpp"
+
+const char* device = "/dev/ttyUSB0";
 
 TEST_GROUP(SpectrumSensorTestGroup)
 {
 };
 
-TEST_GROUP(SpectrumSensorAsyncTestGroup)
-{
-};
-
 TEST(SpectrumSensorTestGroup, TestError)
 {
-	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
+	VESNA::SpectrumSensor ss(device);
 
 	ss.comm->write("invalid-command\n");
 
@@ -34,12 +33,12 @@ TEST(SpectrumSensorTestGroup, TestError)
 
 TEST(SpectrumSensorTestGroup, TestSpectrumSensor)
 {
-	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
+	VESNA::SpectrumSensor ss(device);
 }
 
 TEST(SpectrumSensorTestGroup, TestGetConfigList)
 {
-	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
+	VESNA::SpectrumSensor ss(device);
 
 	VESNA::ConfigList* cl = ss.get_config_list();
 
@@ -54,7 +53,7 @@ TEST(SpectrumSensorTestGroup, TestGetConfigList)
 
 TEST(SpectrumSensorTestGroup, TestSelectSweepChannel)
 {
-	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
+	VESNA::SpectrumSensor ss(device);
 	VESNA::ConfigList* cl = ss.get_config_list();
 	VESNA::DeviceConfig* c = cl->get_config(0, 0);
 	VESNA::SweepConfig* sc = c->get_sample_config(c->base, 100);
@@ -87,7 +86,7 @@ bool test_cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples
 
 TEST(SpectrumSensorTestGroup, TestSampleRun)
 {
-	VESNA::SpectrumSensor ss("/dev/ttyUSB0");
+	VESNA::SpectrumSensor ss(device);
 	VESNA::ConfigList* cl = ss.get_config_list();
 
 	VESNA::DeviceConfig* c = cl->get_config(0, 2);
@@ -105,28 +104,40 @@ TEST(SpectrumSensorTestGroup, TestSampleRun)
 class TestReceiver : public Transceiver::I_ReceiveDataPush
 {
 	public:
-		unsigned sample_cnt;
+		int sample_count;
+		boost::mutex sample_count_m;
 
 		void pushBBSamplesRx(Transceiver::BBPacket* thePushedPacket,
 				Transceiver::Boolean endOfBurst) {
-			sample_cnt += thePushedPacket->SampleNumber;
+			boost::unique_lock<boost::mutex> lock(sample_count_m);
+			sample_count += thePushedPacket->SampleNumber;
+
+			unsigned n;
+			for(n = 0; n < thePushedPacket->SampleNumber; n++) {
+				CHECK(thePushedPacket->packet[n].valueI > 0.);
+				CHECK(thePushedPacket->packet[n].valueQ == 0.);
+			}
 		};
-		TestReceiver() : sample_cnt(0) {};
+		TestReceiver() : sample_count(0) {};
 		~TestReceiver() {};
+};
+
+TEST_GROUP(SpectrumSensorAsyncTestGroup)
+{
 };
 
 TEST(SpectrumSensorAsyncTestGroup, TestAsyncConstructor)
 {
 	TestReceiver rx;
-	SpectrumSensorAsync ssa("/dev/ttyUSB0", &rx);
+	SpectrumSensorAsync ssa(device, &rx);
 
-	CHECK_EQUAL(0, rx.sample_cnt);
+	CHECK_EQUAL(0, rx.sample_count);
 }
 
 TEST(SpectrumSensorAsyncTestGroup, TestAsyncRun)
 {
 	TestReceiver rx;
-	SpectrumSensorAsync ssa("/dev/ttyUSB0", &rx);
+	SpectrumSensorAsync ssa(device, &rx);
 
 	VESNA::ConfigList* cl = ssa.config_list;
 
@@ -143,5 +154,47 @@ TEST(SpectrumSensorAsyncTestGroup, TestAsyncRun)
 	SpectrumSensorAsync::Command cmd2(SpectrumSensorAsync::Command::SAMPLE_OFF);
 	ssa.command(cmd2);
 
-	CHECK(rx.sample_cnt > 0);
+	CHECK(rx.sample_count > 0);
+}
+
+TEST_GROUP(DeviceImpTestGroup)
+{
+};
+
+TEST(DeviceImpTestGroup, TestCreateRXProfile)
+{
+	TestReceiver rx;
+	VESNA::SpectrumSensor ss(device);
+	DeviceImp di(&rx, &ss);
+
+	Transceiver::ReceiveCycleProfile profile;
+	profile.ReceiveStartTime.discriminator = Transceiver::immediateDiscriminator;
+	profile.ReceiveStopTime.discriminator = Transceiver::undefinedDiscriminator;
+	profile.PacketSize = 1024;
+	profile.TuningPreset = 2;
+	profile.CarrierFrequency = 700e6;
+
+	Transceiver::ULong i = di.receiveChannel.createReceiveCycleProfile(
+		profile.ReceiveStartTime,
+		profile.ReceiveStopTime,
+		profile.PacketSize,
+		profile.TuningPreset,
+		profile.CarrierFrequency);
+
+	while(1) {
+		{
+			boost::unique_lock<boost::mutex> lock(rx.sample_count_m);
+			if(rx.sample_count > 0) {
+				break;
+			}
+		}
+	}
+
+	Transceiver::Time stop(Transceiver::immediateDiscriminator);
+	di.receiveChannel.setReceiveStopTime(i, stop);
+
+	di.receiveChannel.wait();
+
+	CHECK(rx.sample_count > 0);
+	CHECK(rx.sample_count % 1024 == 0);
 }

@@ -6,7 +6,7 @@ TEST_GROUP(SpectrumSensorTestGroup)
 {
 };
 
-static void create_config_list(VESNA::ConfigList& cl)
+void create_config_list(VESNA::ConfigList& cl)
 {
 	std::vector<std::string> lines;
 	lines.push_back("device 0: Test device\n");
