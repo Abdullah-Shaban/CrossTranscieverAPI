@@ -80,19 +80,43 @@ TEST(SchedulerTestGroup, TestToFromAbsoluteTime)
 	CHECK(tp2 == tp);
 }
 
-/*
 TEST(SchedulerTestGroup, TestEventBased)
 {
 	Scheduler s;
 
-	Transceiver::Time t1(Transceiver::EventBasedTime(Transceiver::receiveStartTime, 0));
-	Transceiver::Time t2(Transceiver::EventBasedTime(Transceiver::receiveStartTime, 1));
+	Transceiver::EventBasedTime ev(Transceiver::receiveStartTime, 0);
+	ev.eventCountOrigin = Transceiver::EventBasedTime::Next;
+	ev.eventCount = 0;
+
+	Transceiver::Time t(ev);
 
 	handler_cnt = 0;
-	s.schedule(t2, handler2);
-	s.schedule(t1, handler1);
+	s.schedule(t, handler1);
+
+	s.event(Transceiver::receiveStartTime);
 
 	s.stop();
-	CHECK_EQUAL(2, handler_cnt);
+	CHECK_EQUAL(1, handler_cnt);
+}
+/*
+TEST(SchedulerTestGroup, TestEventBasedEventCount)
+{
+	Scheduler s;
+
+	Transceiver::EventBasedTime ev(Transceiver::receiveStartTime, 0);
+	ev.eventCountOrigin = Transceiver::EventBasedTime::Next;
+	ev.eventCount = 1;
+
+	Transceiver::Time t(ev);
+
+	handler_cnt = 0;
+	s.schedule(t, handler1);
+
+	s.event(Transceiver::receiveStartTime);
+	CHECK_EQUAL(0, handler_cnt);
+	s.event(Transceiver::receiveStartTime);
+
+	s.stop();
+	CHECK_EQUAL(1, handler_cnt);
 }
 */

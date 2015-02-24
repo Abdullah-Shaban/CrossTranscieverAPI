@@ -6,6 +6,7 @@
 #undef TIME_UTC
 
 #include <list>
+#include <map>
 
 #include <boost/chrono.hpp>
 #include <boost/thread.hpp>
@@ -14,6 +15,19 @@
 #include "transceiver.hpp"
 
 typedef void (*scheduler_cb_t)();
+
+class EventRegistryEntry
+{
+	public:
+		Transceiver::Time time;
+		scheduler_cb_t cb;
+};
+
+class EventRegistry
+{
+	public:
+		std::list<EventRegistryEntry> entries;
+};
 
 class Scheduler
 {
@@ -25,6 +39,7 @@ class Scheduler
 		~Scheduler();
 
 		void schedule(const Transceiver::Time& time, scheduler_cb_t handler_cb);
+		void event(Transceiver::EventSource es);
 		void stop();
 
 		Transceiver::Time to_absolute_time(const sysclock_t::time_point& time);
@@ -39,6 +54,8 @@ class Scheduler
 		void handler(timer_t* timer, scheduler_cb_t handler_cb);
 
 		boost::chrono::system_clock::time_point epoch;
+
+		std::map<Transceiver::EventSource, EventRegistry> registry;
 };
 
 #endif

@@ -39,6 +39,12 @@ void Scheduler::schedule(const Transceiver::Time& time, scheduler_cb_t handler_c
 		timer->expires_at(from_absolute_time(time));
 
 		timer->async_wait(boost::bind(&Scheduler::handler, this, timer, handler_cb));
+	} else if(time.discriminator == Transceiver::eventBasedDiscriminator) {
+		EventRegistryEntry entry;
+		entry.cb = handler_cb;
+		entry.time = time;
+
+		registry[time.eventBased.eventSourceId].entries.push_back(entry);
 	}
 	/*
 	boost::asio::deadline_timer* timer = new boost::asio::deadline_timer(io);
@@ -47,6 +53,14 @@ void Scheduler::schedule(const Transceiver::Time& time, scheduler_cb_t handler_c
 
 	timer->async_wait(boost::bind(&Scheduler::handler, this, timer, handler_cb));
 	*/
+}
+
+void Scheduler::event(Transceiver::EventSource es)
+{
+	std::list<EventRegistryEntry>::iterator i = registry[es].entries.begin();
+	for(; i != registry[es].entries.end(); ++i) {
+		handler(NULL, i->cb);
+	}
 }
 
 Transceiver::Time Scheduler::to_absolute_time(const Scheduler::sysclock_t::time_point& time)
