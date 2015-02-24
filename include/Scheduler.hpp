@@ -23,6 +23,8 @@ class Scheduler
 		void schedule(const Transceiver::Time& time, scheduler_cb_t handler_cb);
 		void stop();
 
+		Transceiver::Time to_absolute_time(time_t time, Transceiver::ULong nanoseconds);
+
 	private:
 		boost::asio::io_service io;
 		boost::asio::io_service::work *work;
@@ -32,6 +34,8 @@ class Scheduler
 
 		void loop();
 		void handler(boost::asio::deadline_timer* timer, scheduler_cb_t handler_cb);
+
+		time_t epoch;
 };
 
 #endif

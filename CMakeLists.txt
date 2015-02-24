@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.7)
 project (xcvr-eshter)
 
 find_package(Boost REQUIRED
-	COMPONENTS regex thread system
+	COMPONENTS regex thread system chrono
 )
 
 find_package(serial REQUIRED)

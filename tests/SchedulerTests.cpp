@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "Scheduler.hpp"
+#include "boost/chrono.hpp"
 
 TEST_GROUP(SchedulerTestGroup)
 {
@@ -33,6 +34,33 @@ TEST(SchedulerTestGroup, TestImmediate)
 
 	s.stop();
 	CHECK_EQUAL(1, handler_cnt);
+}
+
+TEST(SchedulerTestGroup, TestAbsolute)
+{
+	boost::chrono::system_clock::time_point t = boost::chrono::system_clock::now();
+}
+
+TEST(SchedulerTestGroup, TestToAbsoluteTime)
+{
+	struct tm tm1 = {
+		.tm_sec = 10, // 10 seconds past epoch
+		.tm_min = 0,
+		.tm_hour = 0,
+		.tm_mday = 1,
+		.tm_mon = 0,
+		.tm_year = 2000 - 1900
+	};
+
+	time_t t = mktime(&tm1);
+
+	Scheduler s;
+
+	Transceiver::Time tt = s.to_absolute_time(t, 20);
+
+	CHECK(tt.discriminator == Transceiver::absoluteDiscriminator);
+	CHECK(10 == tt.absolute.secondCount);
+	CHECK(20 == tt.absolute.nanosecondCount);
 }
 
 /*

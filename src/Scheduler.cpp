@@ -2,6 +2,16 @@
 
 Scheduler::Scheduler()
 {
+	struct tm tm1 = {
+		.tm_sec = 0,
+		.tm_min = 0,
+		.tm_hour = 0,
+		.tm_mday = 1,
+		.tm_mon = 0,
+		.tm_year = 2000 - 1900
+	};
+	epoch = mktime(&tm1);
+
 	work = new boost::asio::io_service::work(io);
 	thread = boost::thread(&Scheduler::loop, this);
 }
@@ -32,6 +42,12 @@ void Scheduler::schedule(const Transceiver::Time& time, scheduler_cb_t handler_c
 
 	timer->async_wait(boost::bind(&Scheduler::handler, this, timer, handler_cb));
 	*/
+}
+
+Transceiver::Time Scheduler::to_absolute_time(time_t time, Transceiver::ULong nanoseconds)
+{
+	Transceiver::Time t(Transceiver::AbsoluteTime(time - epoch, nanoseconds));
+	return t;
 }
 
 void Scheduler::handler(boost::asio::deadline_timer* timer, scheduler_cb_t handler_cb)
