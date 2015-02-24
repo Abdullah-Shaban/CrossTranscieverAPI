@@ -60,6 +60,7 @@ class Scheduler
 		boost::chrono::system_clock::time_point epoch;
 
 		std::map<Transceiver::EventSource, EventRegistry> registry;
+		boost::mutex registry_m;
 };
 
 #endif

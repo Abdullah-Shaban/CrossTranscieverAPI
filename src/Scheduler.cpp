@@ -32,6 +32,8 @@ void Scheduler::stop()
 
 void Scheduler::schedule(const Transceiver::Time& time, scheduler_cb_t handler_cb)
 {
+	boost::unique_lock<boost::mutex> lock(registry_m);
+
 	if(time.discriminator == Transceiver::immediateDiscriminator) {
 		handler(NULL, handler_cb);
 	} else if(time.discriminator == Transceiver::absoluteDiscriminator) {
@@ -75,6 +77,8 @@ void Scheduler::schedule(const Transceiver::Time& time, scheduler_cb_t handler_c
 
 void Scheduler::event(Transceiver::EventSource es)
 {
+	boost::unique_lock<boost::mutex> lock(registry_m);
+
 	std::list<EventRegistryEntry>::iterator i = registry[es].entries.begin();
 	for(; i != registry[es].entries.end(); ++i) {
 		if(registry[es].event_cnt == i->target_event_cnt) {
