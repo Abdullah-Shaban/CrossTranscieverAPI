@@ -1,4 +1,8 @@
+#ifndef HAVE_SPECTRUMSENSOR_H
+#define HAVE_SPECTRUMSENSOR_H
+
 #include "serial/serial.h"
+#include "boost/function.hpp"
 
 namespace VESNA {
 
@@ -86,6 +90,7 @@ class SweepConfig
 		ch_t step_ch;
 		int nsamples;
 
+		SweepConfig() {};
 		SweepConfig(DeviceConfig* config_, ch_t start_ch_, ch_t stop_ch_, ch_t step_ch_, 
 				int nsamples_) :
 			config(config_), start_ch(start_ch_), stop_ch(stop_ch_), step_ch(step_ch_),
@@ -103,10 +108,16 @@ class TimestampedData
 		bool parse(std::string s, int ch_num = -1);
 };
 
-typedef bool (*sample_run_cb_t)(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples,
-		void* priv);
+typedef boost::function<bool (const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples)> sample_run_cb_t;
 
-class SpectrumSensor
+class I_SpectrumSensor
+{
+	public:
+		virtual ConfigList* get_config_list() = 0;
+		virtual void sample_run(const SweepConfig* sc, sample_run_cb_t cb) = 0;
+};
+
+class SpectrumSensor : public I_SpectrumSensor
 {
 	public:
 		serial::Serial *comm;
@@ -115,10 +126,12 @@ class SpectrumSensor
 		~SpectrumSensor();
 
 		ConfigList* get_config_list();
-		void sample_run(const SweepConfig* sc, sample_run_cb_t cb, void* priv);
+		void sample_run(const SweepConfig* sc, sample_run_cb_t cb);
 
 		void select_sweep_channel(const SweepConfig* sc);
 		void wait_for_ok();
 };
 
 };
+
+#endif

@@ -15,7 +15,7 @@ int sample_cnt = 0;
 const char* outp;
 FILE* out = NULL;
 
-bool test_cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples, void* priv)
+bool cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples)
 {
 	std::vector<VESNA::data_t>::const_iterator i = samples->data.begin();
 	for(; i != samples->data.end(); ++i) {
@@ -124,7 +124,7 @@ int main(int argc, char** argv)
 
 	VESNA::SweepConfig* sc = c->get_sample_config(freq, nsamples_run);
 
-	ss.sample_run(sc, test_cb, NULL);
+	ss.sample_run(sc, cb);
 
 	delete sc;
 	delete cl;
