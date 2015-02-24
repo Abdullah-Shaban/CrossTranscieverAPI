@@ -1,6 +1,11 @@
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-add_executable(OffLineTests Main.cpp SpectrumSensorTests.cpp DeviceImpTests.cpp SchedulerTests.cpp)
+add_executable(OffLineTests
+	Main.cpp
+	SpectrumSensorTests.cpp
+	DeviceImpTests.cpp
+	DeviceControllerTests.cpp
+	SchedulerTests.cpp)
 target_link_libraries(OffLineTests CppUTest XCVR_Eshter)
 
 add_executable(OnLineTests Main.cpp OnLineTests.cpp)

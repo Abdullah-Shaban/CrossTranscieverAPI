@@ -4,6 +4,7 @@ add_library(XCVR_Eshter
 	SpectrumSensor.cpp
 	SpectrumSensorAsync.cpp
 	DeviceImp.cpp
+	DeviceController.cpp
 	Scheduler.cpp
 )
 target_link_libraries(XCVR_Eshter ${serial_LIBRARIES} ${Boost_LIBRARIES})
