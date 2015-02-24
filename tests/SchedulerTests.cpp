@@ -98,7 +98,7 @@ TEST(SchedulerTestGroup, TestEventBased)
 	s.stop();
 	CHECK_EQUAL(1, handler_cnt);
 }
-/*
+
 TEST(SchedulerTestGroup, TestEventBasedEventCount)
 {
 	Scheduler s;
@@ -119,4 +119,3 @@ TEST(SchedulerTestGroup, TestEventBasedEventCount)
 	s.stop();
 	CHECK_EQUAL(1, handler_cnt);
 }
-*/

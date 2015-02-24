@@ -21,12 +21,14 @@ class EventRegistryEntry
 	public:
 		Transceiver::Time time;
 		scheduler_cb_t cb;
+		Transceiver::ULong target_event_cnt;
 };
 
 class EventRegistry
 {
 	public:
 		std::list<EventRegistryEntry> entries;
+		Transceiver::ULong event_cnt;
 };
 
 class Scheduler
