@@ -14,4 +14,5 @@ include_directories(${serial_INCLUDE_DIRS})
 link_directories(${serial_LIBRARY_DIRS})
 
 add_subdirectory(src)
+add_subdirectory(examples)
 add_subdirectory(tests)
