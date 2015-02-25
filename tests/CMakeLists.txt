@@ -12,7 +12,7 @@ add_executable(OnLineTests Main.cpp OnLineTests.cpp)
 target_link_libraries(OnLineTests CppUTest XCVR_Eshter)
 
 add_custom_target(
-	test ALL
+	test
 	COMMAND OffLineTests
 )
 
