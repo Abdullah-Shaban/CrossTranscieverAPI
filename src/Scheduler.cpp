@@ -68,8 +68,8 @@ void Scheduler::schedule(const Transceiver::Time& time, scheduler_cb_t handler_c
 
 			timer->async_wait(boost::bind(&Scheduler::handler, this, timer, handler_cb));
 		} else {
-			// drop the event - we don't store history for more than one
-			// event back.
+			// we don't store history for more than one event back.
+			assert(0);
 		}
 	}
 }
@@ -82,6 +82,8 @@ void Scheduler::event(Transceiver::EventSource es)
 	for(; i != registry[es].entries.end(); ++i) {
 		if(registry[es].event_cnt == i->target_event_cnt) {
 			if(i->time.eventBased.timeShift == 0) {
+				// note: this will result in a dead-lock if handler immediately
+				// triggers another event.
 				handler(NULL, i->cb);
 			} else {
 				timer_t* timer = new timer_t(io);

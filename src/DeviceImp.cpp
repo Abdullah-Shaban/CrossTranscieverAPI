@@ -1,7 +1,5 @@
 #include "DeviceImp.hpp"
 
-#include <stdio.h>
-
 ReceiveChannel::ReceiveChannel(Transceiver::I_ReceiveDataPush* rx, VESNA::I_SpectrumSensor* ss)
 	: dc(rx, ss), cycle_buffer_cnt(0)
 {
@@ -80,6 +78,7 @@ void ReceiveChannel::configureReceiveCycle(
 		Transceiver::Frequency requestedCarrierFrequency)
 {
 	//FIXME: provide implementation here.
+	assert(0);
 }
 
 void ReceiveChannel::setReceiveStopTime(
@@ -91,8 +90,11 @@ void ReceiveChannel::setReceiveStopTime(
 	std::list<ReceiveCycleProfileEntry*>::iterator i = cycle_buffer.begin();
 	for(; i != cycle_buffer.end(); ++i) {
 		if((*i)->cycle->ReceiveCycle == targetCycleId) {
-			//FIXME: check if previous receiveStopTime was undefined,
-			// because otherwise we don't support this.
+			//FIXME: we only support setReceiveStopTime() if current
+			// receiveStopTime is undefined,
+			assert((*i)->cycle->ReceiveStopTime.discriminator ==
+					Transceiver::undefinedDiscriminator);
+
 			(*i)->cycle->ReceiveStopTime = requestedReceiveStopTime;
 
 			lock.unlock();
@@ -104,7 +106,8 @@ void ReceiveChannel::setReceiveStopTime(
 		}
 	}
 
-	//FIXME: should raise an error here if cycle ID was not found.
+	// requested cycle ID was not found.
+	assert(0);
 }
 
 void ReceiveChannel::wait()
