@@ -221,3 +221,34 @@ TEST(SchedulerTestGroup, TestEventTriggerFromCallbackImmediate)
 	s.stop();
 	CHECK_EQUAL(2, handler_cnt);
 }
+
+/* note: this results in a deadlock because we chain two event calls in the
+ * same thread, which deadlocks on the registry_m mutex lock in event()
+ *
+ * this could be avoided by more fine-grained locking in event registry. You
+ * can't put a mutex into EventRegistry class, because mutexes can't be placed
+ * in a std::map
+
+void handler3(Scheduler* s)
+{
+	s->event(Transceiver::receiveStopTime);
+	handler_cnt++;
+}
+
+TEST(SchedulerTestGroup, TestEventTriggerChainedEvents)
+{
+	Scheduler s;
+
+	Transceiver::Time t1(Transceiver::immediateDiscriminator);
+
+	Transceiver::EventBasedTime ev(Transceiver::receiveStartTime, 0);
+	ev.eventCountOrigin = Transceiver::EventBasedTime::Next;
+	ev.eventCount = 0;
+	Transceiver::Time t2(ev);
+
+	handler_cnt = 0;
+	s.schedule(t2, boost::bind(handler3, &s));
+	s.schedule(t1, boost::bind(handler2, &s));
+	CHECK_EQUAL(2, handler_cnt);
+}
+*/
