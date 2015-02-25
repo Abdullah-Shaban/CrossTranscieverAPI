@@ -58,7 +58,7 @@ sampling frequency/500 kHz bandwidth) are most useful.
 
 While transceiver facility specifies nanosecond precision event scheduling, the
 latency in this implementation is fairly bad. No real-time methods are used
-(not supported in the current vesna-spectrum-sensor firmware).
+(nor supported in the current vesna-spectrum-sensor firmware).
 vesna-spectrum-sensor can be slow to stop reception, specifically with large
 packet sizes (reception can not be interrupted in the middle of a packet).
 
@@ -75,12 +75,12 @@ discriminators have been tested and likely there are unsupported corner cases
 that are not detected properly. Events scheduled in the past or with impossible
 latencies might be silently dropped or cause a deadlock.
 
-Two events are available for scheduling: `receiveStartTime` and
-`receiveStopTime`.
+Two events are available for use in event based discriminator:
+`receiveStartTime` and `receiveStopTime`.
 
 Event based discriminator supports up to one event in the past as the origin
 (i. e. you can use event origin `Previous` with `eventCount >= 0`, but not
-event origin `Beginning` with `eventCount` more than one event in the past)
+event origin `Beginning` with `eventCount` less than one event in the past)
 
 `setReceiveStopTime()` is only supported when the original stop time used the
 undefined discriminator.
