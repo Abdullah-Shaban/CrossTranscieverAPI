@@ -103,7 +103,8 @@ transceiver facility interface. To run the demos, use:
 
 ## License
 
-transceiver.hpp is Copyright Thales Communications S.A
+transceiver.hpp is Copyright Thales Communications & Security S.A.S. (TCS),
+Alejandro Sanchez, Somsai Thao, Eric Nicollet
 
 All other code Copyright (C) 2015 SensorLab, Jozef Stefan Institute
 http://sensorlab.ijs.si
