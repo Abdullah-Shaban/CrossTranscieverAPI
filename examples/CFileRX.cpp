@@ -97,7 +97,7 @@ int main(int argc, char** argv)
 	}
 
 	VESNA::SpectrumSensor ss(device);
-	VESNA::ConfigList* cl = ss.get_config_list();
+	boost::shared_ptr<VESNA::ConfigList> cl = ss.get_config_list();
 
 	int config_id;
 	VESNA::DeviceConfig* c;
@@ -125,6 +125,4 @@ int main(int argc, char** argv)
 	boost::shared_ptr<VESNA::SweepConfig> sc = c->get_sample_config(freq, nsamples_run);
 
 	ss.sample_run(sc, cb);
-
-	delete cl;
 }

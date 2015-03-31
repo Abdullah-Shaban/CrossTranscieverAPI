@@ -22,9 +22,9 @@ class TestReceiver : public Transceiver::I_ReceiveDataPush
 class TestSpectrumSensor : public VESNA::I_SpectrumSensor
 {
 	public:
-		VESNA::ConfigList* get_config_list()
+		boost::shared_ptr<VESNA::ConfigList> get_config_list()
 		{
-			VESNA::ConfigList* cl = new VESNA::ConfigList();
+			boost::shared_ptr<VESNA::ConfigList> cl(new VESNA::ConfigList());
 			create_config_list(*cl);
 			return cl;
 		}

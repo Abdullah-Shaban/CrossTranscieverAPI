@@ -16,7 +16,7 @@ class DeviceController
 		DeviceController(Transceiver::I_ReceiveDataPush* rx, VESNA::I_SpectrumSensor* ss);
 		~DeviceController();
 
-		VESNA::ConfigList* get_config_list();
+		boost::shared_ptr<VESNA::ConfigList> get_config_list();
 
 		void start(boost::shared_ptr<const VESNA::SweepConfig> sc);
 		void stop();
@@ -24,7 +24,7 @@ class DeviceController
 		bool cb(boost::shared_ptr<const VESNA::SweepConfig> sc, const VESNA::TimestampedData* samples);
 
 	private:
-		VESNA::ConfigList* config_list;
+		boost::shared_ptr<VESNA::ConfigList> config_list;
 		boost::thread thread;
 
 		void loop(boost::shared_ptr<const VESNA::SweepConfig> sc);

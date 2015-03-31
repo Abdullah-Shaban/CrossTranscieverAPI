@@ -55,7 +55,7 @@ Transceiver::ULong ReceiveChannel::createReceiveCycleProfile(
 	ReceiveCycleProfileEntry* e = new ReceiveCycleProfileEntry;
 	e->cycle = p;
 
-	VESNA::ConfigList* cl = dc.get_config_list();
+	boost::shared_ptr<VESNA::ConfigList> cl = dc.get_config_list();
 	VESNA::DeviceConfig* c = cl->get_config(0, p->TuningPreset);
 	e->sc = c->get_sample_config(p->CarrierFrequency, p->PacketSize);
 

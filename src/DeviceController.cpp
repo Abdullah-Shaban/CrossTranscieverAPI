@@ -9,10 +9,9 @@ DeviceController::DeviceController(Transceiver::I_ReceiveDataPush* rx, VESNA::I_
 DeviceController::~DeviceController()
 {
 	stop();
-	delete config_list;
 }
 
-VESNA::ConfigList* DeviceController::get_config_list()
+boost::shared_ptr<VESNA::ConfigList> DeviceController::get_config_list()
 {
 	return config_list;
 }

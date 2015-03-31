@@ -204,7 +204,7 @@ SpectrumSensor::~SpectrumSensor()
 	delete comm;
 }
 
-ConfigList* SpectrumSensor::get_config_list()
+boost::shared_ptr<ConfigList> SpectrumSensor::get_config_list()
 {
 	std::vector<std::string> lines;
 
@@ -219,7 +219,7 @@ ConfigList* SpectrumSensor::get_config_list()
 		}
 	}
 
-	ConfigList* cl = new ConfigList();
+	boost::shared_ptr<ConfigList> cl(new ConfigList());
 	cl->parse(lines);
 
 	return cl;

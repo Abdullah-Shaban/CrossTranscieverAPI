@@ -115,7 +115,7 @@ typedef boost::function<bool (boost::shared_ptr<const VESNA::SweepConfig> sc,
 class I_SpectrumSensor
 {
 	public:
-		virtual ConfigList* get_config_list() = 0;
+		virtual boost::shared_ptr<ConfigList> get_config_list() = 0;
 		virtual void sample_run(boost::shared_ptr<const SweepConfig> sc, sample_run_cb_t cb) = 0;
 };
 
@@ -127,7 +127,7 @@ class SpectrumSensor : public I_SpectrumSensor
 		SpectrumSensor(const std::string &port);
 		~SpectrumSensor();
 
-		ConfigList* get_config_list();
+		boost::shared_ptr<ConfigList> get_config_list();
 		void sample_run(boost::shared_ptr<const SweepConfig> sc, sample_run_cb_t cb);
 
 		void select_sweep_channel(boost::shared_ptr<const SweepConfig> sc);

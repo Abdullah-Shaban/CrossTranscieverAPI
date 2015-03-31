@@ -39,27 +39,23 @@ TEST(SpectrumSensorTestGroup, TestGetConfigList)
 {
 	VESNA::SpectrumSensor ss(device);
 
-	VESNA::ConfigList* cl = ss.get_config_list();
+	boost::shared_ptr<VESNA::ConfigList> cl = ss.get_config_list();
 
 	CHECK(cl != NULL);
 
 	VESNA::DeviceConfig* c = cl->get_config(0, 0);
 
 	CHECK(c != NULL);
-
-	delete cl;
 }
 
 TEST(SpectrumSensorTestGroup, TestSelectSweepChannel)
 {
 	VESNA::SpectrumSensor ss(device);
-	VESNA::ConfigList* cl = ss.get_config_list();
+	boost::shared_ptr<VESNA::ConfigList> cl = ss.get_config_list();
 	VESNA::DeviceConfig* c = cl->get_config(0, 0);
 	boost::shared_ptr<VESNA::SweepConfig> sc = c->get_sample_config(c->base, 100);
 
 	ss.select_sweep_channel(sc);
-
-	delete cl;
 }
 
 int test_cb_cnt;
@@ -85,7 +81,7 @@ bool test_cb(boost::shared_ptr<const VESNA::SweepConfig> sc, const VESNA::Timest
 TEST(SpectrumSensorTestGroup, TestSampleRun)
 {
 	VESNA::SpectrumSensor ss(device);
-	VESNA::ConfigList* cl = ss.get_config_list();
+	boost::shared_ptr<VESNA::ConfigList> cl = ss.get_config_list();
 
 	VESNA::DeviceConfig* c = cl->get_config(0, 2);
 	boost::shared_ptr<VESNA::SweepConfig> sc = c->get_sample_config(c->base, nsamples);
@@ -94,8 +90,6 @@ TEST(SpectrumSensorTestGroup, TestSampleRun)
 	ss.sample_run(sc, test_cb);
 
 	CHECK_EQUAL(2, test_cb_cnt);
-
-	delete cl;
 }
 
 class TestReceiver : public Transceiver::I_ReceiveDataPush
