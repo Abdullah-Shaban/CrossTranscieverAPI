@@ -30,6 +30,7 @@ class ReceiveDataPush : public Transceiver::I_ReceiveDataPush
 {
 	private:
 		std::vector<Transceiver::BBSample> buffer;
+		bool clear;
 
 		boost::mutex m;
 		boost::condition_variable cv;

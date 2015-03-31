@@ -29,19 +29,17 @@
 void ReceiveDataPush::pushBBSamplesRx(Transceiver::BBPacket* thePushedPacket,
 				Transceiver::Boolean endOfBurst)
 {
-	printf("==> pushBBSamplesRx received %lu samples\n", thePushedPacket->SampleNumber);
-
-	printf("    [");
-	int n;
-	for(n = 0; n < 5; n++) {
-		printf("%f ", thePushedPacket->packet[n].valueI);
-	}
-	printf("...]\n");
-
 	boost::unique_lock<boost::mutex> l(m);
+
+	if(!clear) {
+		printf("O");
+		fflush(stdout);
+	}
 
 	buffer = std::vector<Transceiver::BBSample>(thePushedPacket->packet,
 			thePushedPacket->packet+thePushedPacket->SampleNumber);
+
+	clear = false;
 
 	l.unlock();
 	cv.notify_one();
@@ -57,6 +55,8 @@ void ReceiveDataPush::push_output(float *out)
 		*out = (i->valueI - 2048.) / 2048.;
 		out++;
 	}
+
+  clear = true;
 }
 
 namespace gr {
