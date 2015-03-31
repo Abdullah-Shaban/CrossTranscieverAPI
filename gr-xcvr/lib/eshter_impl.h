@@ -51,11 +51,13 @@ namespace gr {
 				ReceiveDataPush* receiver;
 				DeviceImp* eshter;
 
-				std::string device_path;
-				Transceiver::Frequency frequency;
-				Transceiver::UShort tuning_preset;
-				Transceiver::ULong packet_size;
+				std::string d_device_path;
+				Transceiver::Frequency d_frequency;
+				Transceiver::UShort d_tuning_preset;
+				Transceiver::ULong d_packet_size;
+
 				Transceiver::ULong cycle_id;
+				bool running;
 
      public:
 			eshter_impl(std::string device_path, float frequency, int tuning_preset, int packet_size);
@@ -63,6 +65,9 @@ namespace gr {
 
 	    bool start(void);
 			bool stop(void);
+
+      void set_frequency(float frequency);
+      float frequency();
 
       // Where all the action really happens
       int work(int noutput_items,

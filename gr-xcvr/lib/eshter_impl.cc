@@ -75,39 +75,44 @@ namespace gr {
     /*
      * The private constructor
      */
-		eshter_impl::eshter_impl(std::string device_path_, float frequency_, int tuning_preset_, int packet_size_)
+		eshter_impl::eshter_impl(std::string device_path, float frequency, int tuning_preset, int packet_size)
       : gr::sync_block("eshter",
               gr::io_signature::make(0, 0, 0),
-              gr::io_signature::make(1, 1, sizeof(float)*packet_size_)),
-			device_path(device_path_),
-			frequency(frequency_),
-			tuning_preset(tuning_preset_),
-			packet_size(packet_size_),
-			eshter(NULL)
-    {}
+              gr::io_signature::make(1, 1, sizeof(float)*packet_size)),
+			d_device_path(device_path),
+			d_frequency(frequency),
+			d_tuning_preset(tuning_preset),
+			d_packet_size(packet_size),
+			running(false)
+    {
+			sensor = new VESNA::SpectrumSensor(device_path);
+			receiver = new ReceiveDataPush;
+			eshter = new DeviceImp(receiver, sensor);
+		}
 
     /*
      * Our virtual destructor.
      */
     eshter_impl::~eshter_impl()
     {
-			if(eshter != NULL) {
+			if(running) {
 				stop();
 			}
+
+			delete eshter;
+			delete receiver;
+	    delete sensor;
     }
 
     bool eshter_impl::start(void)
     {
-			sensor = new VESNA::SpectrumSensor(device_path);
-			receiver = new ReceiveDataPush;
-			eshter = new DeviceImp(receiver, sensor);
-
 			Transceiver::Time start(Transceiver::immediateDiscriminator);
 			Transceiver::Time stop(Transceiver::undefinedDiscriminator);
 
-			cycle_id = eshter->receiveChannel.createReceiveCycleProfile(start, stop, packet_size,
-					tuning_preset, frequency);
+			cycle_id = eshter->receiveChannel.createReceiveCycleProfile(start, stop, d_packet_size,
+					d_tuning_preset, d_frequency);
 
+			running = true;
     }
 
     bool eshter_impl::stop(void)
@@ -115,12 +120,21 @@ namespace gr {
 			Transceiver::Time stop(Transceiver::immediateDiscriminator);
 			eshter->receiveChannel.setReceiveStopTime(cycle_id, stop);
 
-			delete eshter;
-			delete receiver;
-	    delete sensor;
-
-			eshter = NULL;
+			running = false;
     }
+
+    void eshter_impl::set_frequency(float frequency)
+		{
+			stop();
+			d_frequency = frequency;
+			start();
+		}
+
+    float eshter_impl::frequency()
+		{
+			return d_frequency;
+		}
+
 
     int
     eshter_impl::work(int noutput_items,
@@ -132,7 +146,6 @@ namespace gr {
 			float *out = (float*) output_items[0];
 
 			receiver->push_output(out);
-			printf("push\n");
 
       return 1;
     }

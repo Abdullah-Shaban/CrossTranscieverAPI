@@ -5,6 +5,7 @@
   <category>xcvr</category>
   <import>import xcvr</import>
   <make>xcvr.eshter($device_path, $frequency, $preset_id, $samples)</make>
+  <callback>set_frequency($frequency)</callback>
   <param>
     <name>Device path</name>
     <key>device_path</key>

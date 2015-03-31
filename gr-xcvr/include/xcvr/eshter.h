@@ -51,6 +51,9 @@ namespace gr {
 		      float frequency,
 		      int tuning_preset,
 		      int packet_size);
+
+      virtual void set_frequency(float frequency) = 0;
+      virtual float frequency() = 0;
     };
 
   } // namespace xcvr
