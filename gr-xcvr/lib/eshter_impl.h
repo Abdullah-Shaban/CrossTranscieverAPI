@@ -1,4 +1,4 @@
-/* -*- c++ -*- */
+// vim:sw=2 ts=2
 /* 
  * Copyright 2015 <+YOU OR YOUR COMPANY+>.
  * 
@@ -23,17 +23,43 @@
 
 #include <xcvr/eshter.h>
 
+#include "SpectrumSensor.hpp"
+#include "DeviceImp.hpp"
+
+class ReceiveDataPush : public Transceiver::I_ReceiveDataPush
+{
+	private:
+		std::vector<Transceiver::BBSample> buffer;
+
+		boost::mutex m;
+		boost::condition_variable cv;
+
+	public:
+		void pushBBSamplesRx(Transceiver::BBPacket* thePushedPacket,
+				Transceiver::Boolean endOfBurst);
+
+		void push_output(float *out);
+};
+
 namespace gr {
   namespace xcvr {
 
     class eshter_impl : public eshter
     {
      private:
-      // Nothing to declare in this block.
+				VESNA::SpectrumSensor* sensor;
+				ReceiveDataPush* receiver;
+				DeviceImp* eshter;
+
+				Transceiver::ULong packet_size;
+				Transceiver::ULong cycle_id;
 
      public:
-      eshter_impl();
+			eshter_impl(size_t samples);
       ~eshter_impl();
+
+	    bool start(void);
+			bool stop(void);
 
       // Where all the action really happens
       int work(int noutput_items,

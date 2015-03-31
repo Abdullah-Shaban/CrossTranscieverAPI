@@ -36,7 +36,7 @@ if(NOT xcvr_sources)
 endif(NOT xcvr_sources)
 
 add_library(gnuradio-xcvr SHARED ${xcvr_sources})
-target_link_libraries(gnuradio-xcvr ${Boost_LIBRARIES} ${GNURADIO_ALL_LIBRARIES})
+target_link_libraries(gnuradio-xcvr ${Boost_LIBRARIES} ${GNURADIO_ALL_LIBRARIES} XCVR_Eshter)
 set_target_properties(gnuradio-xcvr PROPERTIES DEFINE_SYMBOL "gnuradio_xcvr_EXPORTS")
 
 if(APPLE)
