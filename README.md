@@ -8,10 +8,16 @@ module. The `SpectrumSensor` C++ class should provide an almost identical
 interface to the hardware as in Python. Transceiver facility interface is
 implemented as a layer on top of the `SpectrumSensor` class.
 
+This repository also includes a GNU Radio block built on top of the transceiver
+facility interface. It allows a SNE ESHTER receiver to be included as a signal
+source into a GNU Radio flow graph.
+
 [1]: http://www.crew-project.eu/portal/transceiver-facility-specification
 [2]: https://github.com/avian2/vesna-spectrum-sensor
 
 ## Compiling
+
+### Transceiver facility library
 
 Requirements:
 
@@ -22,6 +28,7 @@ Requirements:
 To compile:
 
     $ mkdir build
+    $ cd build
     $ cmake ..
     $ make
 
@@ -32,6 +39,31 @@ To run off-line tests:
 To run on-line tests (you need a device connected to `/dev/ttyUSB0`:
 
     $ tests/OnLineTests
+
+To install:
+
+    $ make install
+
+### GNU Radio block
+
+Requirements:
+
+ * All of the steps above (including `make install`)
+ * GNU Radio (v3.7.5.1 is known to work)
+
+To compile:
+
+    $ mkdir gr-xcvr/build
+    $ cd gr-xcvr/build
+    $ cmake ..
+    $ make
+
+To install:
+
+    $ make install
+
+A `SNE-ESHTER` block should now be visible in GNU Radio Companion under the
+`XCVR API` category.
 
 ## Implementation notes
 
@@ -87,6 +119,16 @@ undefined discriminator.
 
 `configureReceiveCycle()` is not currently supported at all.
 
+### Regarding the GNU Radio block
+
+In contrast to ordinary signal sources in GNU Radio, the `SNE-ESHTER` block
+operates on vectors of samples. Each vector corresponds to one
+`pushBBSamplesRx` call in the transceiver API. Hence, samples within one vector
+are guaranteed to be consecutive, while an unspecified number of dropped
+samples occurs between two vectors. Vector length is equal to `packet_size`.
+
+Central frequency can be set during run time.
+
 ## Usage
 
 There is a `eshter_rx_cfile` utility available for recording signal samples
@@ -100,6 +142,9 @@ transceiver facility interface. To run the demos, use:
 
     $ examples/eshter_xcvr_demo /dev/ttyUSB0 1
     $ examples/eshter_xcvr_demo /dev/ttyUSB0 2
+
+An example GNU Radio flow graph using the SNE ESHTER block can be found under
+`gr-xcvr/examples/eshter_fft_example.grc`
 
 ## License
 
