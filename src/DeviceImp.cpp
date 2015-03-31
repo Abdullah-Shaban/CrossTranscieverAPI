@@ -23,7 +23,6 @@ void ReceiveChannel::stop_cb(ReceiveCycleProfileEntry* e)
 	{
 		boost::unique_lock<boost::mutex> lock(cycle_buffer_m);
 
-		delete e->sc;
 		delete e->cycle;
 
 		cycle_buffer.remove(e);

@@ -101,14 +101,12 @@ TEST(SpectrumSensorTestGroup, TestGetSampleConfig)
 
 	VESNA::DeviceConfig *c = cl.get_config(0, 0);
 
-	VESNA::SweepConfig *sc = c->get_sample_config(10, 100);
+	boost::shared_ptr<VESNA::SweepConfig> sc = c->get_sample_config(10, 100);
 
 	CHECK(sc->start_ch == c->hz_to_ch(10));
 	CHECK(sc->stop_ch == sc->start_ch + 1);
 	CHECK(sc->step_ch == 1);
 	CHECK(sc->nsamples == 100);
-
-	delete sc;
 }
 
 TEST(SpectrumSensorTestGroup, TestTimestampedData)

@@ -18,16 +18,16 @@ class DeviceController
 
 		VESNA::ConfigList* get_config_list();
 
-		void start(VESNA::SweepConfig* sc);
+		void start(boost::shared_ptr<const VESNA::SweepConfig> sc);
 		void stop();
 
-		bool cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples);
+		bool cb(boost::shared_ptr<const VESNA::SweepConfig> sc, const VESNA::TimestampedData* samples);
 
 	private:
 		VESNA::ConfigList* config_list;
 		boost::thread thread;
 
-		void loop(VESNA::SweepConfig* sc);
+		void loop(boost::shared_ptr<const VESNA::SweepConfig> sc);
 
 		bool want_stop;
 		boost::mutex want_stop_m;

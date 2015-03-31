@@ -17,7 +17,7 @@ class ReceiveCycleProfileEntry
 {
 	public:
 		Transceiver::ReceiveCycleProfile* cycle;
-		VESNA::SweepConfig* sc;
+		boost::shared_ptr<VESNA::SweepConfig> sc;
 };
 
 class ReceiveChannel : public Transceiver::I_ReceiveControl

@@ -103,11 +103,11 @@ bool DeviceConfig::covers(hz_t start_hz, hz_t stop_hz)
 	return (start_hz >= get_start_hz()) && (stop_hz <= get_stop_hz());
 }
 
-SweepConfig* DeviceConfig::get_sample_config(hz_t hz, int nsamples)
+boost::shared_ptr<SweepConfig> DeviceConfig::get_sample_config(hz_t hz, int nsamples)
 {
 	ch_t ch = hz_to_ch(hz);
 
-	return new SweepConfig(this, ch, ch+1, 1, nsamples);
+	return boost::shared_ptr<SweepConfig>(new SweepConfig(this, ch, ch+1, 1, nsamples));
 }
 
 bool TimestampedData::parse(std::string s, int ch_num)
@@ -239,7 +239,7 @@ void SpectrumSensor::wait_for_ok()
 	}
 }
 
-void SpectrumSensor::select_sweep_channel(const SweepConfig* sc)
+void SpectrumSensor::select_sweep_channel(boost::shared_ptr<const SweepConfig> sc)
 {
 	const int buffer_size = 1024;
 	char buffer[buffer_size];
@@ -254,7 +254,7 @@ void SpectrumSensor::select_sweep_channel(const SweepConfig* sc)
 	wait_for_ok();
 }
 
-void SpectrumSensor::sample_run(const SweepConfig* sc, sample_run_cb_t cb)
+void SpectrumSensor::sample_run(boost::shared_ptr<const SweepConfig> sc, sample_run_cb_t cb)
 {
 	select_sweep_channel(sc);
 

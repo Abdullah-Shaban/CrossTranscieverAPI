@@ -29,7 +29,7 @@ class TestSpectrumSensor : public VESNA::I_SpectrumSensor
 			return cl;
 		}
 
-		void sample_run(const VESNA::SweepConfig* sc, VESNA::sample_run_cb_t cb)
+		void sample_run(boost::shared_ptr<const VESNA::SweepConfig> sc, VESNA::sample_run_cb_t cb)
 		{
 			CHECK(700000000 == sc->start_ch);
 
