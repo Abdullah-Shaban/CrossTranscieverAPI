@@ -2,6 +2,7 @@
 <block>
   <name>SNE-ESHTER</name>
   <key>xcvr_eshter</key>
+  <throttle>1</throttle>
   <category>xcvr</category>
   <import>import xcvr</import>
   <make>xcvr.eshter($device_path, $frequency, $preset_id, $samples)</make>
