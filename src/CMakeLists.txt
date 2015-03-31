@@ -7,3 +7,5 @@ add_library(XCVR_Eshter SHARED
 	Scheduler.cpp
 )
 target_link_libraries(XCVR_Eshter ${serial_LIBRARIES} ${Boost_LIBRARIES})
+
+install(TARGETS XCVR_Eshter LIBRARY DESTINATION lib)
