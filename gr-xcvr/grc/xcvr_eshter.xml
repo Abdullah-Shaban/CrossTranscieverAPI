@@ -2,8 +2,8 @@
 <block>
   <name>SNE-ESHTER</name>
   <key>xcvr_eshter</key>
+  <category>XCVR API</category>
   <throttle>1</throttle>
-  <category>xcvr</category>
   <import>import xcvr</import>
   <make>xcvr.eshter($device_path, $frequency, $preset_id, $samples)</make>
   <callback>set_frequency($frequency)</callback>
