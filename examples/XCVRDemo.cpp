@@ -106,7 +106,7 @@ int main(int argc, char** argv)
 	DemoReceiver receiver;
 	VESNA::SpectrumSensor sensor(device);
 
-	printf("Crearing transceiver object (if device is not connected, it will fail here)\n");
+	printf("Creating transceiver object (if device is not connected, it will fail here)\n");
 	DeviceImp* eshter = new DeviceImp(&receiver, &sensor);
 
 	switch(demo_num) {
