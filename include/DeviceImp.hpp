@@ -44,9 +44,6 @@ class ReceiveChannel : public Transceiver::I_ReceiveControl
 
 		void wait();
 
-		bool pushSamples(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples,
-				Transceiver::ReceiveCycleProfile* cycle);
-
 	private:
 		DeviceController dc;
 		Scheduler scheduler;
