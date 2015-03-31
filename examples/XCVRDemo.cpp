@@ -1,3 +1,23 @@
+/*
+ * Copyright (C) 2015 SensorLab, Jozef Stefan Institute
+ *
+ * This is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3, or (at your option)
+ * any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street,
+ * Boston, MA 02110-1301, USA.
+ *
+ * Written by Tomaz Solc, tomaz.solc@ijs.si
+ */
 #include <stdio.h>
 
 #include "SpectrumSensor.hpp"
@@ -86,7 +106,7 @@ int main(int argc, char** argv)
 	DemoReceiver receiver;
 	VESNA::SpectrumSensor sensor(device);
 
-	printf("Crearing transceiver object (if device is not connected, it will fail here)\n");
+	printf("Creating transceiver object (if device is not connected, it will fail here)\n");
 	DeviceImp* eshter = new DeviceImp(&receiver, &sensor);
 
 	switch(demo_num) {
