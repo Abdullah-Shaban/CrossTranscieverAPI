@@ -76,7 +76,8 @@ namespace gr {
       : gr::sync_block("eshter",
               gr::io_signature::make(0, 0, 0),
               gr::io_signature::make(1, 1, sizeof(float)*samples)),
-			packet_size(samples)
+			packet_size(samples),
+			eshter(NULL)
     {}
 
     /*
@@ -84,6 +85,9 @@ namespace gr {
      */
     eshter_impl::~eshter_impl()
     {
+			if(eshter != NULL) {
+				stop();
+			}
     }
 
     bool eshter_impl::start(void)
@@ -114,6 +118,8 @@ namespace gr {
 			delete eshter;
 			delete receiver;
 	    delete sensor;
+
+			eshter = NULL;
     }
 
     int
