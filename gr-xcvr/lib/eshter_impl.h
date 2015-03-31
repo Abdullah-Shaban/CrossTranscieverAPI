@@ -51,11 +51,14 @@ namespace gr {
 				ReceiveDataPush* receiver;
 				DeviceImp* eshter;
 
+				std::string device_path;
+				Transceiver::Frequency frequency;
+				Transceiver::UShort tuning_preset;
 				Transceiver::ULong packet_size;
 				Transceiver::ULong cycle_id;
 
      public:
-			eshter_impl(size_t samples);
+			eshter_impl(std::string device_path, float frequency, int tuning_preset, int packet_size);
       ~eshter_impl();
 
 	    bool start(void);

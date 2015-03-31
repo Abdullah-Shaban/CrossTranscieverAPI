@@ -39,14 +39,18 @@ namespace gr {
       typedef boost::shared_ptr<eshter> sptr;
 
       /*!
-       * \brief Return a shared_ptr to a new instance of xcvr::eshter.
+       * \brief Make a new SNE-ESHTER source block.
        *
-       * To avoid accidental use of raw pointers, xcvr::eshter's
-       * constructor is in a private implementation
-       * class. xcvr::eshter::make is the public interface for
-       * creating new instances.
+       * \param device_path Path to device file to use for communication with
+       * the sensor.
+       * \param frequency Central frequency in hertz.
+       * \param tuning_preset Preset ID (sets sample rate and filter bandwidth).
+       * \param packet_size Number of consecutive baseband samples to take.
        */
-      static sptr make(int samples);
+      static sptr make(std::string device_path,
+		      float frequency,
+		      int tuning_preset,
+		      int packet_size);
     };
 
   } // namespace xcvr

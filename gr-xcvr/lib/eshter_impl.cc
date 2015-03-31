@@ -63,20 +63,26 @@ namespace gr {
   namespace xcvr {
 
     eshter::sptr
-    eshter::make(int samples)
+    eshter::make(std::string device_path,
+		      float frequency,
+		      int tuning_preset,
+		      int packet_size)
     {
       return gnuradio::get_initial_sptr
-        (new eshter_impl(samples));
+        (new eshter_impl(device_path, frequency, tuning_preset, packet_size));
     }
 
     /*
      * The private constructor
      */
-    eshter_impl::eshter_impl(size_t samples)
+		eshter_impl::eshter_impl(std::string device_path_, float frequency_, int tuning_preset_, int packet_size_)
       : gr::sync_block("eshter",
               gr::io_signature::make(0, 0, 0),
-              gr::io_signature::make(1, 1, sizeof(float)*samples)),
-			packet_size(samples),
+              gr::io_signature::make(1, 1, sizeof(float)*packet_size_)),
+			device_path(device_path_),
+			frequency(frequency_),
+			tuning_preset(tuning_preset_),
+			packet_size(packet_size_),
 			eshter(NULL)
     {}
 
@@ -92,21 +98,15 @@ namespace gr {
 
     bool eshter_impl::start(void)
     {
-			sensor = new VESNA::SpectrumSensor("/dev/ttyUSB0");
+			sensor = new VESNA::SpectrumSensor(device_path);
 			receiver = new ReceiveDataPush;
 			eshter = new DeviceImp(receiver, sensor);
 
 			Transceiver::Time start(Transceiver::immediateDiscriminator);
 			Transceiver::Time stop(Transceiver::undefinedDiscriminator);
 
-			// 1 MHz bandwidth, 2 MHz sampling freq
-			Transceiver::UShort tuning_preset = 2;
-
-			// 700 MHz center frequency
-			Transceiver::Frequency freq = 700000000;
-
 			cycle_id = eshter->receiveChannel.createReceiveCycleProfile(start, stop, packet_size,
-					tuning_preset, freq);
+					tuning_preset, frequency);
 
     }
 

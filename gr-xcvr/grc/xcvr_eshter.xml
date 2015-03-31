@@ -1,26 +1,33 @@
 <?xml version="1.0"?>
 <block>
-  <name>eshter</name>
+  <name>SNE-ESHTER</name>
   <key>xcvr_eshter</key>
   <category>xcvr</category>
   <import>import xcvr</import>
-  <make>xcvr.eshter($samples)</make>
-  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
-       Sub-nodes:
-       * name
-       * key (makes the value accessible as $keyname, e.g. in the make node)
-       * type -->
+  <make>xcvr.eshter($device_path, $frequency, $preset_id, $samples)</make>
   <param>
-    <name>samples</name>
-    <key>samples</key>
+    <name>Device path</name>
+    <key>device_path</key>
+    <value>/dev/ttyUSB0</value>
+    <type>string</type>
+  </param>
+  <param>
+    <name>Frequency (Hz)</name>
+    <key>frequency</key>
+    <type>float</type>
+  </param>
+  <param>
+  <name>Preset ID</name>
+    <key>preset_id</key>
+    <value>2</value>
     <type>int</type>
   </param>
-
-  <!-- Make one 'source' node per output. Sub-nodes:
-       * name (an identifier for the GUI)
-       * type
-       * vlen
-       * optional (set to 1 for optional inputs) -->
+  <param>
+    <name>Num. samples</name>
+    <key>samples</key>
+    <value>1024</value>
+    <type>int</type>
+  </param>
   <source>
     <name>out</name>
     <type>float</type>
