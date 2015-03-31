@@ -9,15 +9,14 @@ DeviceController::DeviceController(Transceiver::I_ReceiveDataPush* rx, VESNA::I_
 DeviceController::~DeviceController()
 {
 	stop();
-	delete config_list;
 }
 
-VESNA::ConfigList* DeviceController::get_config_list()
+boost::shared_ptr<VESNA::ConfigList> DeviceController::get_config_list()
 {
 	return config_list;
 }
 
-void DeviceController::start(VESNA::SweepConfig* sc)
+void DeviceController::start(boost::shared_ptr<const VESNA::SweepConfig> sc)
 {
 	stop();
 
@@ -41,12 +40,13 @@ void DeviceController::stop()
 	}
 }
 
-void DeviceController::loop(VESNA::SweepConfig* sc)
+void DeviceController::loop(boost::shared_ptr<const VESNA::SweepConfig> sc)
 {
 	sensor->sample_run(sc, boost::bind(&DeviceController::cb, this, _1, _2));
 }
 
-bool DeviceController::cb(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples)
+bool DeviceController::cb(boost::shared_ptr<const VESNA::SweepConfig> sc,
+		const VESNA::TimestampedData* samples)
 {
 	{
 		boost::unique_lock<boost::mutex> lock(want_stop_m);

@@ -17,7 +17,7 @@ class ReceiveCycleProfileEntry
 {
 	public:
 		Transceiver::ReceiveCycleProfile* cycle;
-		VESNA::SweepConfig* sc;
+		boost::shared_ptr<VESNA::SweepConfig> sc;
 };
 
 class ReceiveChannel : public Transceiver::I_ReceiveControl
@@ -43,9 +43,6 @@ class ReceiveChannel : public Transceiver::I_ReceiveControl
 			Transceiver::Time requestedReceiveStopTime);
 
 		void wait();
-
-		bool pushSamples(const VESNA::SweepConfig* sc, const VESNA::TimestampedData* samples,
-				Transceiver::ReceiveCycleProfile* cycle);
 
 	private:
 		DeviceController dc;
