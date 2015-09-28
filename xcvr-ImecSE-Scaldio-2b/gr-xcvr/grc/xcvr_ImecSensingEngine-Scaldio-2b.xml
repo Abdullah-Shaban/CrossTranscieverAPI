@@ -1,0 +1,26 @@
+<block>
+  <name>ImecSensingEngine-Scaldio-2b</name>
+  <key>xcvr_ImecSensingEngine_Scaldio_2b</key>
+  <category>XCVR API</category>
+  <throttle>1</throttle>
+  <import>import xcvr</import>
+  <make>xcvr.ImecSensingEngine($frequency, $samples)</make>
+  <callback>set_frequency($frequency)</callback>
+  <param>
+    <name>Frequency</name>
+    <key>frequency</key>
+    <value>2.412e9</value>
+    <type>float</type>
+  </param>
+  <param>
+    <name>Samples</name>
+    <key>samples</key>
+    <value>2048</value>
+    <type>raw</type>
+  </param>
+  <source>
+    <name>out</name>
+    <type>complex</type>
+    <vlen>$samples</vlen>
+  </source>
+</block>
